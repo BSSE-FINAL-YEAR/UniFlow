@@ -1,0 +1,24 @@
+{
+  "_note": "Synthetic team-created data. No real student records. Week 1 scope exclusion.",
+  "programmes": [
+    {"code": "BSSE", "name": "BSc Software Engineering", "college": "CoCIS", "years": 4, "modes": ["PS", "EVE"]},
+    {"code": "BSCS", "name": "BSc Computer Science", "college": "CoCIS", "years": 3, "modes": ["PS"]},
+    {"code": "BIST", "name": "BSc Information Systems Technology", "college": "CoCIS", "years": 3, "modes": ["PS", "EVE"]}
+  ],
+  "students": [
+    {"reg_no": "23/U/05288/PS", "name": "Synthetic Student A", "programme": "BSSE", "year": 4},
+    {"reg_no": "23/U/13693/PS", "name": "Synthetic Student B", "programme": "BSSE", "year": 4},
+    {"reg_no": "24/U/07741/EVE", "name": "Synthetic Student C", "programme": "BIST", "year": 3},
+    {"reg_no": "25/U/02210/PS", "name": "Synthetic Student D", "programme": "BSCS", "year": 2},
+    {"reg_no": "26/U/00915/PS", "name": "Synthetic Student E", "programme": "BSSE", "year": 1}
+  ],
+  "courses": [
+    {"code": "BSE1101", "name": "Programming Fundamentals", "programme": "BSSE", "year": 1, "units": 1, "prerequisites": []},
+    {"code": "BSE2101", "name": "Data Structures", "programme": "BSSE", "year": 2, "units": 1, "prerequisites": ["BSE1101"]},
+    {"code": "BSE3101", "name": "Software Design", "programme": "BSSE", "year": 3, "units": 1, "prerequisites": ["BSE2101"]},
+    {"code": "BSE4104", "name": "Emerging Trends in SE", "programme": "BSSE", "year": 4, "units": 1, "prerequisites": ["BSE3101"]},
+    {"code": "BSE4105", "name": "Software Quality Assurance", "programme": "BSSE", "year": 4, "units": 1, "prerequisites": ["BSE3101"]}
+  ],
+  "rooms": ["LLT1", "LLT2", "Lab A", "Lab B"],
+  "lecturers": ["LEC-01", "LEC-02", "LEC-03"]
+}

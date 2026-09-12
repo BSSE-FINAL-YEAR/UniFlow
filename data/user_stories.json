@@ -1,0 +1,98 @@
+{
+  "US-01": {
+    "workflow": "student_registration",
+    "story": "As an academic/registration administrator, I want to register a student so that a valid student record exists in UniFlow.",
+    "acceptance_criteria": [
+      "A valid registration number is accepted and preserved.",
+      "A student number is derived from the registration number.",
+      "The derived student number is unique regardless of PS/EVE.",
+      "Required student and programme fields are validated before registration is completed."
+    ]
+  },
+  "US-02": {
+    "workflow": "student_registration",
+    "story": "As an administrator, I want student email addresses validated so that student records use the expected university email format.",
+    "acceptance_criteria": [
+      "A valid university student email is accepted.",
+      "An invalid format is rejected.",
+      "The email is stored with the student record after successful validation."
+    ]
+  },
+  "US-03": {
+    "workflow": "student_registration",
+    "story": "As an administrator, I want duplicate derived student numbers rejected so that PS and EVE do not create two records for the same student number.",
+    "acceptance_criteria": [
+      "A second record with an existing derived student number is rejected.",
+      "The PS/EVE suffix does not make the derived student number unique.",
+      "The system reports a clear validation error."
+    ]
+  },
+  "US-04": {
+    "workflow": "student_registration",
+    "story": "As an administrator, I want study mode restricted to supported programme/year combinations so that students cannot be registered into an unavailable mode.",
+    "acceptance_criteria": [
+      "Only defined PS/EVE combinations are accepted.",
+      "An unsupported programme/year/mode combination is rejected.",
+      "The reason for rejection is recorded or displayed."
+    ]
+  },
+  "US-05": {
+    "workflow": "course_registration",
+    "story": "As a student, I want to enroll for a semester so that I can proceed to course registration.",
+    "acceptance_criteria": [
+      "A valid student can enroll for the applicable semester.",
+      "Required prerequisite conditions for enrollment are checked.",
+      "An invalid/ineligible enrollment request is rejected.",
+      "Enrollment status is stored and available to later course-registration checks."
+    ]
+  },
+  "US-06": {
+    "workflow": "course_registration",
+    "story": "As a student, I want to register for an eligible course so that my semester registration reflects my approved study plan.",
+    "acceptance_criteria": [
+      "The course belongs to the student's programme or is otherwise explicitly eligible.",
+      "The course is available for the semester/year.",
+      "Required enrollment and eligibility checks pass before registration."
+    ]
+  },
+  "US-07": {
+    "workflow": "course_registration",
+    "story": "As a student, I want prerequisite requirements checked so that I cannot register for a course without satisfying its prerequisites.",
+    "acceptance_criteria": [
+      "A student who has satisfied all prerequisites can register.",
+      "A student missing a required prerequisite is rejected.",
+      "The unmet prerequisite is identifiable in the validation result."
+    ]
+  },
+  "US-08": {
+    "workflow": "course_registration",
+    "story": "As a student, I want my course load limited according to year so that I cannot exceed the UniFlow maximum.",
+    "acceptance_criteria": [
+      "Year 1 maximum is 6 units.",
+      "Year 2 maximum is 6 units.",
+      "Year 3 maximum is 5 units.",
+      "Year 4 maximum is 4 units.",
+      "A registration that exceeds the applicable limit is rejected."
+    ]
+  },
+  "US-09": {
+    "workflow": "course_registration",
+    "story": "As a student, I want duplicate course registrations prevented so that the same course cannot be registered twice in one applicable period.",
+    "acceptance_criteria": [
+      "A course can be registered only once for the applicable semester/period.",
+      "A duplicate request is rejected.",
+      "The existing registration is not duplicated or corrupted."
+    ]
+  },
+  "US-10": {
+    "workflow": "timetable_generation",
+    "story": "As an administrator, I want a timetable generated within UniFlow constraints so that teaching sessions do not create prohibited conflicts.",
+    "acceptance_criteria": [
+      "Day sessions fall within 08:00-16:00.",
+      "Evening sessions fall within 16:30-20:30.",
+      "Each course is taught at least once and at most twice per week.",
+      "Student, lecturer and room conflicts are detected/prevented.",
+      "The generated timetable contains identifiable course, time and room information."
+    ]
+  }
+}
