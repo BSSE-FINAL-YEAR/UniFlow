@@ -129,7 +129,7 @@ def main() -> None:
 
     for case in cases:
         story = resolve_story(case, stories)
-        system, user = build_prompt(args.prompt, story, rule_pack)
+        system, user = build_prompt(args.prompt, story, rule_pack, story_id=case["story_id"])
         resp = generate(user=user, system=system)
         validation = parse_and_validate(resp.text)
         parsed = validation["parsed"]
@@ -163,10 +163,21 @@ def main() -> None:
         print(f"{case['id']}  {case['category'][:22]:<24} {actual[:80]}")
 
     csv_path = EVAL / f"results_{args.prompt}.csv"
+    fieldnames = list(rows[0])
+    existing_by_id: dict[str, dict] = {}
+    if csv_path.exists():
+        with csv_path.open(newline="") as fh:
+            for r in csv.DictReader(fh):
+                existing_by_id[r["case_id"]] = r
+    for r in rows:
+        existing_by_id[r["case_id"]] = r
+    # Preserve the suite's declared order regardless of which subset ran this time.
+    ordered = [existing_by_id[c["id"]] for c in suite["cases"] if c["id"] in existing_by_id]
+
     with csv_path.open("w", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows(ordered)
 
     errors = sum(1 for r in rows if r["actual_summary"].startswith("MODEL ERROR"))
     lat = [r["latency_ms"] for r in rows if not r["actual_summary"].startswith("MODEL ERROR")]

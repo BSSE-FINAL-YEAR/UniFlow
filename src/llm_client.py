@@ -177,7 +177,49 @@ def generate(user: str, system: str = "", temperature: float = DEFAULT_TEMPERATU
     )
 
 
+def list_models() -> list[str]:
+    """List model IDs available to the configured provider's API key."""
+    provider = os.environ.get("LLM_PROVIDER", "gemini").lower()
+    if provider == "gemini":
+        key = os.environ.get("GEMINI_API_KEY")
+        if not key:
+            raise LLMError("GEMINI_API_KEY is not set. Copy .env.example to .env and fill it in.")
+        data = _post_get(
+            "https://generativelanguage.googleapis.com/v1beta/models",
+            {"x-goog-api-key": key},
+        )
+        return [m["name"].removeprefix("models/") for m in data.get("models", [])]
+    if provider == "groq":
+        key = os.environ.get("GROQ_API_KEY")
+        if not key:
+            raise LLMError("GROQ_API_KEY is not set. Copy .env.example to .env and fill it in.")
+        data = _post_get(
+            "https://api.groq.com/openai/v1/models",
+            {"Authorization": f"Bearer {key}"},
+        )
+        return [m["id"] for m in data.get("data", [])]
+    raise LLMError(f"unknown LLM_PROVIDER {provider!r}; expected one of {list(_PROVIDERS)}")
+
+
+def _post_get(url: str, headers: dict) -> dict:
+    resp = requests.get(url, headers=headers, timeout=TIMEOUT_SECONDS)
+    if resp.status_code >= 400:
+        raise LLMError(f"HTTP {resp.status_code}: {resp.text[:300]}")
+    return resp.json()
+
+
 if __name__ == "__main__":
+    import sys
+
+    if "--list" in sys.argv:
+        try:
+            for model_id in list_models():
+                print(model_id)
+        except LLMError as exc:
+            print(f"FAILED: {exc}")
+            raise SystemExit(1)
+        raise SystemExit(0)
+
     # Smoke test — run this first to confirm your key works.
     r = generate(
         user='Reply with exactly {"ok": true} and nothing else.',
