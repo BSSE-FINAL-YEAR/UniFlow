@@ -167,7 +167,7 @@ This is the intellectual core of Week 2 and the most commonly under-done deliver
 
 ---
 
-### 4.4 Ainebyona Alvin (EMUDUKO) — QA / Testing & Documentation Lead
+### 4.4 Ainebyona Alvin — QA / Testing & Documentation Lead
 **Owns: D4 (10-case evaluation table) + D5 (Week 2 progress report)**
 
 Both drafted for you in this bundle. Your work is:
@@ -186,7 +186,7 @@ Both drafted for you in this bundle. Your work is:
 7. Finalise D5 with real numbers, real challenges, real commit links.
 8. Log every Week 2 task in ClickUp with owner, status, due date, and link each to a commit. Capture screenshots into `evidence/screenshots/`.
 
-⚠️ **Do not pre-fill results.** The Actual and Verdict columns stay empty until the runs happen. Fabricated results are the fastest way to fail the "every student must explain their work" rule at the demo.
+**Do not pre-fill results.** The Actual and Verdict columns stay empty until the runs happen. Fabricated results are the fastest way to fail the "every student must explain their work" rule at the demo.
 
 ---
 
