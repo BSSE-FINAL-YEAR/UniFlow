@@ -50,12 +50,12 @@ Week 2 ends **Friday 11 September 2026**. It is Thursday afternoon. Plan accordi
 | D1 | Working baseline model interaction | **Odongo Emmanuel** | Backend / System Lead |
 | D2 | Model Selection Note (1 page max) | **Swale Sebabe** | AI / Agent Lead |
 | D3 | Prompt Specification + version history | **Yohana Mahamat** | Project / Requirements Lead |
-| D4 | 10-case prompt evaluation table | **Ainebyona Alvin (EMUDUKO)** | QA / Testing & Documentation Lead |
-| D5 | Week 2 progress report (1–2 pages) | **Ainebyona Alvin (EMUDUKO)** | QA / Testing & Documentation Lead |
+| D4 | 10-case prompt evaluation table | **Ainebyona Alvin** | QA / Testing & Documentation Lead |
+| D5 | Week 2 progress report (1–2 pages) | **Ainebyona Alvin** | QA / Testing & Documentation Lead |
 
 Roles carry over cleanly from Week 1, which is good — the brief says "Every member must own identifiable tasks per each week."
 
-**Load balance note.** D1 and D2 are naturally paired (the client wrapper is small; the note is analysis). D4 and D5 are the heaviest single load, which is why EMUDUKO gets no build task. D3 is medium but on the critical path for D4. Roughly even.
+**Load balance note.** D1 and D2 are naturally paired (the client wrapper is small; the note is analysis). D4 and D5 are the heaviest single load, which is why Alvin gets no build task. D3 is medium but on the critical path for D4. Roughly even.
 
 ---
 
@@ -65,14 +65,14 @@ Roles carry over cleanly from Week 1, which is good — the brief says "Every me
 Swale: get API key ──┐
                      ├──> Odongo: llm_client.py works ──┐
 Swale: Model Note ───┘                                  │
-                                                        ├──> EMUDUKO: run 10 cases ──> D4 table
+                                                        ├──> Alvin: run 10 cases ──> D4 table
 Yohana: Prompt Spec v1.0 ───────────────────────────────┘                                │
    │                                                                                     │
    └──> Yohana: v1.1 (informed by first eval results) ──> re-run ──> D4 comparison ───────┤
                                                                                          │
 Odongo: uniflow_core rules (independent, no blocker) ────────────────────────────────────┤
                                                                                          v
-                                                                            EMUDUKO: D5 progress report
+                                                                            Alvin: D5 progress report
 ```
 
 **Two things can start immediately with zero dependencies:**
@@ -107,7 +107,7 @@ Odongo: uniflow_core rules (independent, no blocker) ─────────
 | Privacy & access | Critical for you: UniFlow uses **synthetic data only** (Week 1 scope exclusion), so no real student data leaves the country. State this explicitly — it maps to the brief's integrity rule about not sending restricted data to external services. Note free-tier data-retention terms. | 3–4 lines |
 | Risks & fallback | Rate limits, deprecation, outage → named fallback model and how you'd switch (one env var). | 2 lines |
 
-⚠️ **Verify every number against official docs before submitting.** The brief explicitly says "Verify all AI-suggested references and technical claims before using them." Free-tier limits change often; do not cite a blog post. Cite `ai.google.dev/pricing` or `console.groq.com/docs/rate-limits` and date the citation.
+**Verify every number against official docs before submitting.** The brief explicitly says "Verify all AI-suggested references and technical claims before using them." Free-tier limits change often; do not cite a blog post. Cite `ai.google.dev/pricing` or `console.groq.com/docs/rate-limits` and date the citation.
 
 **Reading:** Lanham Ch.2, "Choosing the optimal LLM," pp. 34–36. Osmani Ch.1, "AI Models: The Landscape for Code Generation," pp. 25–30.
 
@@ -221,6 +221,6 @@ Both drafted for you in this bundle. Your work is:
 | Swale | Lanham Ch.2 "Choosing the optimal LLM" pp. 34–36; Osmani Ch.1 pp. 25–30 |
 | Yohana | Lanham Ch.2 "Prompting LLMs with prompt engineering" pp. 25–34; Osmani Ch.2 pp. 40–63 |
 | Odongo | Huyen Ch.5 prompting basics and best practices, pp. 212–235 |
-| EMUDUKO | Huyen Ch.2 "The Probabilistic Nature of AI" pp. 105–111 — directly relevant to why you run each case more than once |
+| Alvin | Huyen Ch.2 "The Probabilistic Nature of AI" pp. 105–111 — directly relevant to why you run each case more than once |
 
 Each person contributes 2–3 lines to the progress report's "key engineering decisions" section citing their reading. Cheap marks, and it makes the report defensible under questioning.
