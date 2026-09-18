@@ -6,7 +6,7 @@ from typing import cast
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from uniflow_core.rules import (
+from uniflow_core.rules import (  # pyright: ignore[reportMissingImports]
     parse_registration_number, check_duplicate_student_number, check_course_load,
     check_teaching_window, check_course_frequency, check_prerequisites,
     detect_timetable_conflicts,

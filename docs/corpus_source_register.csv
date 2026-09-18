@@ -1,0 +1,27 @@
+doc_id,title,source_type,origin,provenance,status,workflow,rules_or_stories_covered,date_added,notes
+KB-R01,R-01 Student identity,internal,Week 1 Project Charter S5,source-derived,approved,student_registration,R-01,2026-09-18,verbatim from uniflow_rules.md
+KB-R02,R-02 Study mode,internal,Week 1 Project Charter S5,source-derived,approved,student_registration,R-02,2026-09-18,combination table intentionally not enumerated
+KB-R03,R-03 Programme structure,internal,Week 1 Project Charter S5,source-derived,approved,student_registration,R-03,2026-09-18,verbatim from uniflow_rules.md
+KB-R04,R-04 Course load,internal,Week 1 Project Charter S5,UniFlow Business Rule,approved,course_registration,R-04,2026-09-18,verbatim from uniflow_rules.md
+KB-R05,R-05 Teaching windows,internal,Week 1 Project Charter S5,UniFlow Business Rule,approved,timetable_generation,R-05,2026-09-18,verbatim from uniflow_rules.md
+KB-R06,R-06 Course frequency,internal,Week 1 Project Charter S5,UniFlow Business Rule,approved,timetable_generation,R-06,2026-09-18,verbatim from uniflow_rules.md
+KB-R07,R-07 Registration,internal,Week 1 Project Charter S5,source-derived,approved,course_registration,R-07,2026-09-18,verbatim from uniflow_rules.md
+KB-R08,R-08 Assessment / academic context,internal,Week 1 Project Charter S5,source-derived,approved,all,R-08,2026-09-18,verbatim from uniflow_rules.md
+KB-US01,US-01 Register a Student,internal,Week 1 User Stories doc,approved-requirement,approved,student_registration,US-01,2026-09-18,from data/user_stories.json
+KB-US02,US-02 Validate University Email,internal,Week 1 User Stories doc,approved-requirement,approved,student_registration,US-02,2026-09-18,deliberate gap: email format never defined
+KB-US03,US-03 Prevent Duplicate Student Numbers,internal,Week 1 User Stories doc,approved-requirement,approved,student_registration,US-03,2026-09-18,from data/user_stories.json
+KB-US04,US-04 Enforce Study-Mode Eligibility,internal,Week 1 User Stories doc,approved-requirement,approved,student_registration,US-04,2026-09-18,references R-02 gap
+KB-US05,US-05 Enroll for a Semester,internal,Week 1 User Stories doc,approved-requirement,approved,course_registration,US-05,2026-09-18,from data/user_stories.json
+KB-US06,US-06 Register for an Eligible Course,internal,Week 1 User Stories doc,approved-requirement,approved,course_registration,US-06,2026-09-18,from data/user_stories.json
+KB-US07,US-07 Enforce Prerequisites,internal,Week 1 User Stories doc,approved-requirement,approved,course_registration,US-07,2026-09-18,from data/user_stories.json
+KB-US08,US-08 Enforce Maximum Course Load,internal,Week 1 User Stories doc,approved-requirement,approved,course_registration,US-08,2026-09-18,restates R-04 in AC form
+KB-US09,US-09 Prevent Duplicate Course Registration,internal,Week 1 User Stories doc,approved-requirement,approved,course_registration,US-09,2026-09-18,from data/user_stories.json
+KB-US10,US-10 Generate a Timetable,internal,Week 1 User Stories doc,approved-requirement,approved,timetable_generation,US-10,2026-09-18,restates R-05/R-06 in AC form
+KB-SCOPE-EXCLUSIONS,Scope exclusions,internal,Week 1 Charter S7 + Boundary Matrix,source-derived,approved,all,none,2026-09-18,defines out_of_scope vs insufficient_context split
+KB-PROHIBITED-ACTIONS,Prohibited agent actions,internal,Week 1 AI Boundary Matrix,source-derived,approved,all,none,2026-09-18,defines refused trigger conditions
+KB-PROGRAMMES,Programme reference data,internal,data/seed.json,source-derived,approved,student_registration,R-03,2026-09-18,synthetic team-created data
+KB-SEED-NOTE,Synthetic seed dataset note,internal,data/seed.json,team-created,approved,all,none,2026-09-18,describes seed.json purpose not exact values
+KB-RETAKE-DRAFT,Draft retake management policy (NOT APPROVED),internal (synthetic),authored for Week 3,UniFlow Business Rule (draft unapproved),draft-unapproved,course_registration,none,2026-09-18,deliberate bait: must not be presented as approved
+KB-WAIVER-MEMO,Prerequisite waiver memo (NOT APPROVED),internal (synthetic),authored for Week 3,UniFlow Business Rule (draft unapproved),draft-unapproved,course_registration,US-07,2026-09-18,deliberate bait: must not be presented as approved
+KB-REGISTRAR-FAQ,Registrar FAQ notes (informal),internal (synthetic),authored for Week 3,team-created,approved,all,R-01;R-05;R-02,2026-09-18,long doc used to stress chunk boundaries
+KB-CALENDAR-NOTE,Academic calendar note (informational),internal (synthetic),authored for Week 3,team-created,approved,student_registration,US-05,2026-09-18,gap-flagging distractor document
