@@ -73,7 +73,7 @@ def main() -> None:
             "notes": "",
             "trace": trace["_trace_path"],
         })
-        print(f"{case['id']}  {case['category'][:22]:<24} {actual[:90]}")
+        print(f"{case['id']}  {case['category'][:22]:<24} {actual}")
 
     csv_path = EVAL / "rag_results_v1.0.csv"
     fieldnames = list(rows[0])
