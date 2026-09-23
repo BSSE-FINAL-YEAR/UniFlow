@@ -17,11 +17,13 @@ regardless of the PS/EVE suffix.
 
 ## R-02 Study mode — *source-derived*
 `PS` means Day; `EVE` means Evening. Only programme/year combinations defined for the
-UniFlow colleges and programmes are supported.
+UniFlow colleges and programmes are supported. The full approved combination table is
+R-09, below.
 
 ## R-03 Programme structure — *source-derived*
-CEAD programmes are four-year programmes. CoCIS includes BSc Software Engineering (4 years),
-BSc Computer Science (3 years) and BSc Information Systems Technology (3 years).
+CEAD programmes are four-year programmes: BSc Civil Engineering, BSc Electrical Engineering,
+BSc Quantity Surveying and BSc Mechanical Engineering. CoCIS includes BSc Software Engineering
+(4 years), BSc Computer Science (3 years) and BSc Information Systems Technology (3 years).
 
 ## R-04 Course load — *UniFlow Business Rule*
 Maximum course load is 6 units in Year 1, 6 in Year 2, 5 in Year 3 and 4 in Year 4.
@@ -40,6 +42,14 @@ course-load and timetable checks before course registration is accepted.
 ## R-08 Assessment / academic context — *source-derived*
 The simulated system reflects only academic-management rules relevant to the three selected
 workflows. Unrelated institutional processes are excluded.
+
+## R-09 Approved programme/year/study-mode combinations — *UniFlow Business Rule*
+Evening (`EVE`) study is approved only for BSc Software Engineering (BSSE) Year 4 and BSc
+Computer Science (BSCS) Year 3. BSc Information Systems Technology (BIST) and every CEAD
+programme are Day (`PS`) only, in every year. Day study is available in every year of every
+programme. Added after Week 3 to resolve a previously-unenumerated gap in R-02/US-04 — this
+is a decision made for the UniFlow prototype's scope, not part of the originally supplied
+documentation.
 
 ---
 

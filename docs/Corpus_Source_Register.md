@@ -61,3 +61,25 @@ failures (Week 3 activity 5), not just to pad the count:
 - `KB-CALENDAR-NOTE` — a topically-adjacent distractor for questions about
   `US-05` enrollment timing, to test whether the retriever surfaces the
   wrong-but-similar document over the right one.
+
+## Corpus changelog
+
+**2026-09-23 — added the second college and resolved the R-02 combination gap.**
+The Week 1 Charter only ever detailed CoCIS; the College of Engineering, Art
+and Design (CEAD) and its four programmes were missing from `data/seed.json`
+and the corpus. Also added: `KB-R02-COMBINATIONS`, a new UniFlow Business
+Rule enumerating exactly which programme/year pairs support Evening study
+(BSSE Year 4, BSCS Year 3 — everything else, including all of CEAD and
+BIST, is Day-only). This was a genuine gap in Week 1-3's supplied scope,
+not a correction of an error, and is documented here rather than edited
+into the Week 1 Charter retroactively.
+
+Consequences, recorded rather than hidden: `KB-PROGRAMMES`, `KB-R02`,
+`KB-R03`, `KB-US04` and `KB-REGISTRAR-FAQ` were updated to point at or
+incorporate the new rule; synthetic Student C was reassigned from BIST to
+BSCS (Year 3) because her original record became an invalid combination
+under the new rule; and `eval/rag_eval_cases.json`'s `RQ-07` was
+reclassified from "Partially answerable" to "Answerable" since the gap it
+tested no longer exists. `eval/rag_results_v1.0.csv` and
+`docs/Week3_Failures.md` are left as-is — they are the historical record of
+a run against the pre-2026-09-23 corpus, not a live document.

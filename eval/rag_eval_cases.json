@@ -95,16 +95,17 @@
     },
     {
       "id": "RQ-07",
-      "category": "Partially answerable",
+      "category": "Answerable",
       "question": "What programme/year/study-mode combinations are supported?",
-      "intent": "R-02 asserts only defined combinations are supported but never enumerates them. Tests whether the pipeline flags the gap or invents a combination table (same trap as Week 2's PE-11).",
+      "intent": "As of 2026-09-23 this is no longer an unenumerated gap (KB-R02-COMBINATIONS was added). Reclassified from 'Partially answerable' to 'Answerable' — was PASS under the old PARTIAL expectation on the pre-2026-09-23 corpus (see eval/rag_results_v1.0.csv and docs/Week3_Failures.md, which reflect that earlier corpus and were intentionally left as historical record rather than rewritten). Now tests numeric/table fidelity instead of gap-flagging: does the pipeline use the exact approved list rather than inventing or generalizing one.",
       "expected": [
-        "status == 'partial' or 'insufficient_context'",
-        "answer/reason explicitly states the combination table is not enumerated in the knowledge base",
-        "no invented specific programme/year/mode table presented as approved",
-        "sources includes 'KB-R02'"
+        "status == 'ok'",
+        "answer states Evening is approved only for BSSE Year 4 and BSCS Year 3",
+        "answer states BIST and all CEAD programmes are Day-only in every year",
+        "no invented combination beyond these two",
+        "sources includes 'KB-R02-COMBINATIONS'"
       ],
-      "checks_doc": "KB-R02",
+      "checks_doc": "KB-R02-COMBINATIONS",
       "actual": "",
       "verdict": ""
     },

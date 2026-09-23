@@ -25,8 +25,10 @@ would be.
 ## Are all programme/year/mode combinations from the programme reference
 data automatically supported?
 
-No. R-02 states that only "defined" programme/year combinations are
-supported, but this knowledge base does not enumerate that table anywhere
-— KB-PROGRAMMES only lists which modes each programme supports overall,
-not a year-by-year combination table. Do not infer or invent a specific
-combination table from the programme list; flag the gap instead.
+No, and this one now has a concrete answer (it didn't for most of this
+project's development — see KB-R02-COMBINATIONS, added as a UniFlow
+Business Rule after Week 3). Evening (EVE) is approved only for BSSE Year
+4 and BSCS Year 3; every other programme/year, and all of BIST and CEAD,
+is Day (PS) only. Do not present a different combination as approved, and
+do not treat KB-PROGRAMMES alone as sufficient — it lists which programmes
+exist, not which of them run in the evening.
