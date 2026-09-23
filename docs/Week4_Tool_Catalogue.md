@@ -1,7 +1,7 @@
 # UniFlow — Week 4 Tool Catalogue
 
 Two tools, both named in `04_Initial_Architecture_Description GROUP I.docx`
-§3's "Approved Tools" row since Week 1 (`inspect_project()`-style read tool
+Section 3's "Approved Tools" row since Week 1 (`inspect_project()`-style read tool
 and `create_defect_report()`). This document is the contract: written before
 the orchestration code, so the two teammates implementing it in `src/tools/`
 are building against a fixed spec rather than inventing one as they go.
