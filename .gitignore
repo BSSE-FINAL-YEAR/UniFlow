@@ -2,3 +2,6 @@
 .venv/
 __pycache__/
 *.pyc
+
+# Local ClickUp attachments only — do not publish
+docs/Week4_ClickUp_*.docx
