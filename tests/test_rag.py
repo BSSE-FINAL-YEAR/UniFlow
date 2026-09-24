@@ -8,9 +8,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from rag.chunk import chunk_document
-from rag.ingest import load_corpus
-from rag.retrieve import get_index, retrieve
+from rag.chunk import chunk_document  # pyright: ignore[reportMissingImports]
+from rag.ingest import load_corpus  # pyright: ignore[reportMissingImports]
+from rag.retrieve import get_index, retrieve  # pyright: ignore[reportMissingImports]
 
 
 def test_corpus_loads_and_matches_register():
