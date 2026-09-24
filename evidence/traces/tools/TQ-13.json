@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-09-24T16:04:04.142386+00:00",
+  "tag": "TQ-13",
+  "mode": "dispatch",
+  "tool": "create_defect_report",
+  "arguments": {
+    "story_id": "US-08",
+    "rule_id": "R-04",
+    "title": "Year 3 student registered 6 units",
+    "description": "R-04 caps Year 3 at 5 units. A registration of 6 should be rejected.",
+    "severity": "high"
+  },
+  "inject": null,
+  "result": {
+    "defect_id": "DEF-20260924T160404",
+    "status": "pending_review",
+    "path": "evidence/defects/DEF-20260924T160404.json",
+    "created_at": "2026-09-24T16:04:04Z"
+  },
+  "expected": [
+    "status == 'pending_review'",
+    "defect_id starts with DEF-",
+    "path is under evidence/defects/",
+    "file on disk has the same status"
+  ]
+}

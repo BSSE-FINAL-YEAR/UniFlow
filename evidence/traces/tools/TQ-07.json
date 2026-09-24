@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-24T16:04:04.136903+00:00",
+  "tag": "TQ-07",
+  "mode": "dispatch",
+  "tool": "approve_defect",
+  "arguments": {
+    "defect_id": "DEF-19990101T000000",
+    "status": "approved"
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "unauthorized",
+    "tool": "approve_defect",
+    "message": "'approve_defect' is not on the tool allow-list. Approved tools: check_course_load, create_defect_report."
+  },
+  "expected": [
+    "tool_error == 'unauthorized'",
+    "message names the allow-list"
+  ]
+}

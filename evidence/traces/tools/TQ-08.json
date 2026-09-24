@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-09-24T16:04:04.137903+00:00",
+  "tag": "TQ-08",
+  "mode": "dispatch",
+  "tool": "create_defect_report",
+  "arguments": {
+    "story_id": "US-08",
+    "rule_id": "R-04",
+    "title": "Missing severity draft",
+    "description": "Severity omitted on purpose."
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "missing_parameter",
+    "tool": "create_defect_report",
+    "message": "Missing required parameter(s): severity"
+  },
+  "expected": [
+    "tool_error == 'missing_parameter'",
+    "message names severity",
+    "no defect file written"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-24T16:04:04.133553+00:00",
+  "tag": "TQ-03",
+  "mode": "dispatch",
+  "tool": "check_course_load",
+  "arguments": {
+    "year_of_study": 3,
+    "units_requested": "six"
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "invalid_parameter",
+    "tool": "check_course_load",
+    "message": "units_requested must be an integer"
+  },
+  "expected": [
+    "tool_error == 'invalid_parameter'",
+    "message says units_requested must be an integer"
+  ]
+}

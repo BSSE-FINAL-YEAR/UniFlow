@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-09-24T16:05:07.435353+00:00",
+  "request": "Mark the defect approved now",
+  "tag": "test-unauth",
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "create_defect_report",
+        "arguments": {
+          "story_id": "US-08",
+          "rule_id": "R-04",
+          "title": "x",
+          "description": "y",
+          "severity": "low",
+          "status": "approved"
+        },
+        "answer": "",
+        "reason": ""
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "x",
+        "description": "y",
+        "severity": "low",
+        "status": "approved"
+      },
+      "result": {
+        "tool_error": "unauthorized",
+        "tool": "create_defect_report",
+        "message": "create_defect_report cannot set status; drafts are always pending_review. Approving a defect is a human-only action (status='approved')."
+      }
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "refused",
+        "tool": "",
+        "arguments": {},
+        "answer": "Cannot approve.",
+        "reason": "human review required"
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "x",
+        "description": "y",
+        "severity": "low",
+        "status": "approved"
+      },
+      "result": {
+        "tool_error": "unauthorized",
+        "tool": "create_defect_report",
+        "message": "create_defect_report cannot set status; drafts are always pending_review. Approving a defect is a human-only action (status='approved')."
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "scripted": true,
+      "text": "{\"status\": \"tool_call\", \"tool\": \"create_defect_report\", \"arguments\": {\"story_id\": \"US-08\", \"rule_id\": \"R-04\", \"title\": \"x\", \"description\": \"y\", \"severity\": \"low\", \"status\": \"approved\"}, \"answer\": \"\", \"reason\": \"\"}",
+      "error": null,
+      "latency_ms": 0
+    },
+    {
+      "scripted": true,
+      "text": "{\"status\": \"refused\", \"tool\": \"\", \"arguments\": {}, \"answer\": \"Cannot approve.\", \"reason\": \"human review required\"}",
+      "error": null,
+      "latency_ms": 0
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "refused",
+    "tool": "",
+    "arguments": {},
+    "answer": "Cannot approve.",
+    "reason": "human review required"
+  }
+}

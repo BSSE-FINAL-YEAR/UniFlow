@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-09-24T16:04:04.141329+00:00",
+  "tag": "TQ-12",
+  "mode": "dispatch",
+  "tool": "check_course_load",
+  "arguments": {
+    "year_of_study": 2,
+    "units_requested": 4
+  },
+  "inject": "malformed_result",
+  "result": {
+    "tool_error": "unexpected_response",
+    "tool": "check_course_load",
+    "message": "Tool returned a result that failed its output schema (injected malformed_result for evaluation)."
+  },
+  "expected": [
+    "tool_error == 'unexpected_response'"
+  ]
+}

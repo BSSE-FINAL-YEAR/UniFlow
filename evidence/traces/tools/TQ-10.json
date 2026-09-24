@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-09-24T16:04:04.138902+00:00",
+  "tag": "TQ-10",
+  "mode": "dispatch",
+  "tool": "create_defect_report",
+  "arguments": {
+    "story_id": "story eight",
+    "rule_id": "R-04",
+    "title": "Bad story id",
+    "description": "story_id must match US-NN.",
+    "severity": "low"
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "invalid_parameter",
+    "tool": "create_defect_report",
+    "message": "story_id must match US-NN"
+  },
+  "expected": [
+    "tool_error == 'invalid_parameter'",
+    "message mentions story_id"
+  ]
+}

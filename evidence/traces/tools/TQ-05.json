@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-09-24T16:04:04.134887+00:00",
+  "tag": "TQ-05",
+  "mode": "dispatch",
+  "tool": "check_course_load",
+  "arguments": {
+    "year_of_study": 3,
+    "units_requested": 6
+  },
+  "inject": null,
+  "result": {
+    "ok": false,
+    "rule": "R-04",
+    "message": "Course load 6 exceeds Year 3 maximum of 5",
+    "value": null
+  },
+  "expected": [
+    "ok == false",
+    "rule == 'R-04'",
+    "message mentions Year 3 maximum of 5",
+    "no tool_error key"
+  ]
+}

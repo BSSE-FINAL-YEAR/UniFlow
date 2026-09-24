@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-24T16:04:04.131545+00:00",
+  "tag": "TQ-01",
+  "mode": "dispatch",
+  "tool": "check_course_load",
+  "arguments": {
+    "year_of_study": 3
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "missing_parameter",
+    "tool": "check_course_load",
+    "message": "Missing required parameter(s): units_requested"
+  },
+  "expected": [
+    "tool_error == 'missing_parameter'",
+    "message names units_requested",
+    "rules.check_course_load is never called with an invented units value"
+  ]
+}

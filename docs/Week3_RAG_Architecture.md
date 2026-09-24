@@ -84,3 +84,69 @@ Two places, on purpose — this is the finding Week 2 already anticipated
 | Prompt construction + generation | `src/rag_baseline.py` |
 | 15-case evaluation | `eval/rag_eval_cases.json`, `src/rag_eval_runner.py` |
 | Traces (grounding evidence) | `evidence/traces/rag/*.json` |
+
+---
+
+# Week 4 addition — tool-calling loop
+
+Week 4 sits **on top of** the query-time RAG flow above. It does not replace
+retrieval. The model may still answer from retrieved context; when the request
+needs a rule check or a durable draft, it returns a `tool_call` JSON object
+instead of a final answer, and Python runs a real function.
+
+This is the agentic loop already named in
+`04_Initial_Architecture_Description GROUP I.docx` §5:
+retrieve context → plan → call an approved tool → inspect result → decide
+whether another step is necessary → stop/report.
+
+```mermaid
+flowchart TD
+    U["User request"] --> ORCH["tool_baseline.py<br/>manual JSON dispatch"]
+    ORCH --> LLM["llm_client.generate()<br/>(unchanged from Weeks 2-3)"]
+    LLM --> PARSE["parse_and_validate()<br/>status / tool / arguments"]
+    PARSE -->|"status != tool_call"| OUT["Final JSON:<br/>ok / refused / out_of_scope / ..."]
+    PARSE -->|"status == tool_call"| AL["Allow-list check<br/>src/tools/registry.py"]
+    AL -->|"name not listed"| ERR["tool_error: unauthorized"]
+    AL -->|"listed"| SCH["Argument schema check"]
+    SCH -->|"missing / wrong type"| ERR2["tool_error:<br/>missing_parameter / invalid_parameter"]
+    SCH -->|"valid"| FN["Real Python tool"]
+    FN --> CCL["check_course_load<br/>wraps rules.py R-04<br/>read-only"]
+    FN --> CDR["create_defect_report<br/>writes evidence/defects/<br/>status always pending_review"]
+    CCL --> BACK["Feed tool result into<br/>a second generate() call"]
+    CDR --> BACK
+    ERR --> BACK
+    ERR2 --> BACK
+    BACK --> LLM
+    OUT --> TR["evidence/traces/tools/*.json<br/>one file for the whole loop"]
+    BACK --> TR
+```
+
+Human approval sits **outside** the loop. `scripts/review_defect.py` can set
+`approved` or `rejected`. It is not in the allow-list, so the model cannot
+call it. That is the Week 1 Boundary Matrix row already agreed:
+*"Draft defect reports — Allowed... Human reviews/accepts defects."*
+
+## Native function-calling — considered, not used
+
+Gemini `functionDeclarations` / Groq OpenAI-style `tools` were considered and
+rejected for Week 4. `llm_client.py` already has two provider-specific call
+paths; native tool-calling would add a third schema per provider. Manual
+JSON-dispatch uses the same output-contract pattern as `baseline.py` and
+`rag_baseline.py`, works identically for either model, and matches the
+Week 1 allow-listed loop rather than a vendor API. Worth revisiting only if
+a later week needs parallel multi-tool calls that the JSON contract cannot
+express cleanly.
+
+## Week 4 file map
+
+| Stage | File |
+|---|---|
+| Tool contracts | `docs/Week4_Tool_Catalogue.md` |
+| Allow-list + dispatch | `src/tools/registry.py`, `src/tools/dispatch.py` |
+| Tool 1 (read) | `src/tools/check_course_load.py` → `uniflow_core.rules.check_course_load` |
+| Tool 2 (draft side effect) | `src/tools/create_defect_report.py` |
+| Orchestration | `src/tool_baseline.py` |
+| Human-only approval | `scripts/review_defect.py` (not a tool) |
+| Evaluation | `eval/tool_eval_cases.json`, `src/tool_eval_runner.py` |
+| Traces | `evidence/traces/tools/` |
+| Draft records | `evidence/defects/` |

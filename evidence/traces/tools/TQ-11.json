@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-09-24T16:04:04.140328+00:00",
+  "tag": "TQ-11",
+  "mode": "dispatch",
+  "tool": "create_defect_report",
+  "arguments": {
+    "story_id": "US-08",
+    "rule_id": "R-04",
+    "title": "Simulated disk failure",
+    "description": "Writer raises OSError before any file is stored.",
+    "severity": "medium"
+  },
+  "inject": "write_failure",
+  "result": {
+    "tool_error": "unavailable",
+    "tool": "create_defect_report",
+    "message": "Could not write defect report: simulated disk write failure"
+  },
+  "expected": [
+    "tool_error == 'unavailable'",
+    "message mentions write/disk failure",
+    "no defect_id returned as if the write succeeded"
+  ]
+}

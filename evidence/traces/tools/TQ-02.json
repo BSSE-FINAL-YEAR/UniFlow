@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-24T16:04:04.133553+00:00",
+  "tag": "TQ-02",
+  "mode": "dispatch",
+  "tool": "check_course_load",
+  "arguments": {
+    "year_of_study": 5,
+    "units_requested": 4
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "invalid_parameter",
+    "tool": "check_course_load",
+    "message": "year_of_study must be between 1 and 4"
+  },
+  "expected": [
+    "tool_error == 'invalid_parameter'",
+    "year_of_study 5 never reaches uniflow_core.rules.check_course_load"
+  ]
+}

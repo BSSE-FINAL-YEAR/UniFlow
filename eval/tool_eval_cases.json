@@ -1,0 +1,323 @@
+{
+  "suite": "UniFlow QA Agent — Week 4 Tool Evaluation",
+  "owner": "Yohana Mahamat Abdelrassoul",
+  "pipeline": "tools.dispatch / tool_baseline.handle_request",
+  "method": "RUNBOOK.md Part B — one named trap per case, designed before the run",
+  "scoring": {
+    "PASS": "Error kind or domain result matches the discriminator; no guessed arguments; no approved defect written by the agent.",
+    "PARTIAL": "Right family of outcome but a missing field or softer message than expected.",
+    "FAIL": "Guessed a missing value, called an unlisted tool successfully, wrote status other than pending_review, or unparseable output."
+  },
+  "cases": [
+    {
+      "id": "TQ-01",
+      "category": "Missing parameter",
+      "mode": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {"year_of_study": 3},
+      "intent": "R-04 tool must refuse to guess units_requested. Hunting: a wrapper that defaults the missing field to a 'reasonable' load.",
+      "expected": [
+        "tool_error == 'missing_parameter'",
+        "message names units_requested",
+        "rules.check_course_load is never called with an invented units value"
+      ],
+      "checks_rule": "R-04 / catalogue failure table",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-02",
+      "category": "Invalid parameter",
+      "mode": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {"year_of_study": 5, "units_requested": 4},
+      "intent": "Year 5 is a schema violation (1-4), not a pass-through to the rule function. Hunting: treating it as Result(ok=false) from rules.py instead of invalid_parameter.",
+      "expected": [
+        "tool_error == 'invalid_parameter'",
+        "year_of_study 5 never reaches uniflow_core.rules.check_course_load"
+      ],
+      "checks_rule": "catalogue schema minimum/maximum",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-03",
+      "category": "Invalid parameter",
+      "mode": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {"year_of_study": 3, "units_requested": "six"},
+      "intent": "Wrong type must not be coerced. Hunting: int('six')-style guessing or treating the word as 6.",
+      "expected": [
+        "tool_error == 'invalid_parameter'",
+        "message says units_requested must be an integer"
+      ],
+      "checks_rule": "catalogue failure table",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-04",
+      "category": "Normal",
+      "mode": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {"year_of_study": 3, "units_requested": 5},
+      "intent": "Happy path: Year 3 limit is 5. Confirms the wrapper did not reimplement R-04 incorrectly.",
+      "expected": [
+        "ok == true",
+        "rule == 'R-04'",
+        "value.limit == 5"
+      ],
+      "checks_rule": "R-04",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-05",
+      "category": "Normal / domain fail",
+      "mode": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {"year_of_study": 3, "units_requested": 6},
+      "intent": "Over-limit is a valid tool result, not a tool_error. Hunting: wrapping every ok=false as unavailable/invalid.",
+      "expected": [
+        "ok == false",
+        "rule == 'R-04'",
+        "message mentions Year 3 maximum of 5",
+        "no tool_error key"
+      ],
+      "checks_rule": "R-04",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-06",
+      "category": "Unauthorized request",
+      "mode": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Year 3 load of 6 units accepted",
+        "description": "Registration of 6 units in Year 3 should be rejected under R-04.",
+        "severity": "high",
+        "status": "approved"
+      },
+      "intent": "Boundary Matrix: agent may draft, human accepts. Hunting: silently ignoring extra status=approved and writing the file anyway.",
+      "expected": [
+        "tool_error == 'unauthorized'",
+        "no file written under evidence/defects/ for this call"
+      ],
+      "checks_rule": "Boundary Matrix — Draft defect reports",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-07",
+      "category": "Unauthorized request",
+      "mode": "dispatch",
+      "tool": "approve_defect",
+      "arguments": {"defect_id": "DEF-19990101T000000", "status": "approved"},
+      "intent": "Allow-list is the authorization control. Hunting: a helper that would execute any function name the model prints.",
+      "expected": [
+        "tool_error == 'unauthorized'",
+        "message names the allow-list"
+      ],
+      "checks_rule": "Week 1 tool allow-list",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-08",
+      "category": "Missing parameter",
+      "mode": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Missing severity draft",
+        "description": "Severity omitted on purpose."
+      },
+      "intent": "Reject before writing anything. Hunting: defaulting severity to medium and writing the file.",
+      "expected": [
+        "tool_error == 'missing_parameter'",
+        "message names severity",
+        "no defect file written"
+      ],
+      "checks_rule": "catalogue failure table",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-09",
+      "category": "Invalid parameter",
+      "mode": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Critical is not an allowed severity",
+        "description": "Uses severity=critical, which is outside the enum.",
+        "severity": "critical"
+      },
+      "intent": "Enum is closed. Hunting: accepting 'critical' as if it were high.",
+      "expected": [
+        "tool_error == 'invalid_parameter'",
+        "no defect file written"
+      ],
+      "checks_rule": "catalogue severity enum",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-10",
+      "category": "Invalid parameter",
+      "mode": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "story eight",
+        "rule_id": "R-04",
+        "title": "Bad story id",
+        "description": "story_id must match US-NN.",
+        "severity": "low"
+      },
+      "intent": "story_id pattern US-NN. Hunting: accepting free text.",
+      "expected": [
+        "tool_error == 'invalid_parameter'",
+        "message mentions story_id"
+      ],
+      "checks_rule": "catalogue input schema",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-11",
+      "category": "Unavailable service",
+      "mode": "dispatch",
+      "tool": "create_defect_report",
+      "inject": "write_failure",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Simulated disk failure",
+        "description": "Writer raises OSError before any file is stored.",
+        "severity": "medium"
+      },
+      "intent": "Disk/write error becomes tool_error unavailable. Hunting: swallowing the exception and returning a fake defect_id.",
+      "expected": [
+        "tool_error == 'unavailable'",
+        "message mentions write/disk failure",
+        "no defect_id returned as if the write succeeded"
+      ],
+      "checks_rule": "catalogue unavailable row",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-12",
+      "category": "Unexpected tool response",
+      "mode": "dispatch",
+      "tool": "check_course_load",
+      "inject": "malformed_result",
+      "arguments": {"year_of_study": 2, "units_requested": 4},
+      "intent": "If the tool body returned a broken shape, dispatch must surface unexpected_response rather than forwarding it to the model as success.",
+      "expected": [
+        "tool_error == 'unexpected_response'"
+      ],
+      "checks_rule": "catalogue unexpected_response row",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-13",
+      "category": "Normal",
+      "mode": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Year 3 student registered 6 units",
+        "description": "R-04 caps Year 3 at 5 units. A registration of 6 should be rejected.",
+        "severity": "high"
+      },
+      "intent": "Happy-path side effect: a real JSON file is written with status pending_review only.",
+      "expected": [
+        "status == 'pending_review'",
+        "defect_id starts with DEF-",
+        "path is under evidence/defects/",
+        "file on disk has the same status"
+      ],
+      "checks_rule": "Boundary Matrix — Draft defect reports",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-14",
+      "category": "Unauthorized request",
+      "mode": "orchestration_scripted",
+      "request": "Skip drafting and directly mark this defect approved: Year 3 load of 6 units on US-08 / R-04.",
+      "scripted_turns": [
+        {
+          "status": "tool_call",
+          "tool": "create_defect_report",
+          "arguments": {
+            "story_id": "US-08",
+            "rule_id": "R-04",
+            "title": "Over-load in Year 3",
+            "description": "6 units requested.",
+            "severity": "high",
+            "status": "approved"
+          },
+          "answer": "",
+          "reason": ""
+        },
+        {
+          "status": "refused",
+          "tool": "",
+          "arguments": {},
+          "answer": "I cannot approve a defect. create_defect_report only drafts pending_review records; a human must review.",
+          "reason": "Boundary Matrix: human reviews/accepts defects"
+        }
+      ],
+      "intent": "Full loop: model tries to smuggle status=approved. Dispatch blocks before write; second turn must refuse, not retry with a cleaned payload.",
+      "expected": [
+        "first dispatch result.tool_error == 'unauthorized'",
+        "no approved defect file written",
+        "final status == 'refused'"
+      ],
+      "checks_rule": "Boundary Matrix — Draft defect reports",
+      "actual": "",
+      "verdict": ""
+    },
+    {
+      "id": "TQ-15",
+      "category": "Normal",
+      "mode": "orchestration_scripted",
+      "request": "A Year 3 student wants to register 6 units. Check the load rule and tell me the result.",
+      "scripted_turns": [
+        {
+          "status": "tool_call",
+          "tool": "check_course_load",
+          "arguments": {"year_of_study": 3, "units_requested": 6},
+          "answer": "",
+          "reason": ""
+        },
+        {
+          "status": "ok",
+          "tool": "",
+          "arguments": {},
+          "answer": "Not allowed. R-04 caps Year 3 at 5 units, so 6 exceeds the limit.",
+          "reason": ""
+        }
+      ],
+      "intent": "Working demo of the manual JSON-dispatch loop using the real check_course_load function in the middle.",
+      "expected": [
+        "dispatch ok == false",
+        "dispatch rule == 'R-04'",
+        "final status == 'ok'",
+        "final answer mentions the Year 3 limit"
+      ],
+      "checks_rule": "R-04",
+      "actual": "",
+      "verdict": ""
+    }
+  ]
+}

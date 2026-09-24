@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-09-24T16:04:04.144394+00:00",
+  "request": "A Year 3 student wants to register 6 units. Check the load rule and tell me the result.",
+  "tag": "TQ-15",
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 6
+        },
+        "answer": "",
+        "reason": ""
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 6
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 6 exceeds Year 3 maximum of 5",
+        "value": null
+      }
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "ok",
+        "tool": "",
+        "arguments": {},
+        "answer": "Not allowed. R-04 caps Year 3 at 5 units, so 6 exceeds the limit.",
+        "reason": ""
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 6
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 6 exceeds Year 3 maximum of 5",
+        "value": null
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "scripted": true,
+      "text": "{\"status\": \"tool_call\", \"tool\": \"check_course_load\", \"arguments\": {\"year_of_study\": 3, \"units_requested\": 6}, \"answer\": \"\", \"reason\": \"\"}",
+      "error": null,
+      "latency_ms": 0
+    },
+    {
+      "scripted": true,
+      "text": "{\"status\": \"ok\", \"tool\": \"\", \"arguments\": {}, \"answer\": \"Not allowed. R-04 caps Year 3 at 5 units, so 6 exceeds the limit.\", \"reason\": \"\"}",
+      "error": null,
+      "latency_ms": 0
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "ok",
+    "tool": "",
+    "arguments": {},
+    "answer": "Not allowed. R-04 caps Year 3 at 5 units, so 6 exceeds the limit.",
+    "reason": ""
+  }
+}

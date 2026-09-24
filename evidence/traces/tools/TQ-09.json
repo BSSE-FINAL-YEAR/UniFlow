@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-09-24T16:04:04.138902+00:00",
+  "tag": "TQ-09",
+  "mode": "dispatch",
+  "tool": "create_defect_report",
+  "arguments": {
+    "story_id": "US-08",
+    "rule_id": "R-04",
+    "title": "Critical is not an allowed severity",
+    "description": "Uses severity=critical, which is outside the enum.",
+    "severity": "critical"
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "invalid_parameter",
+    "tool": "create_defect_report",
+    "message": "severity must be one of low|medium|high"
+  },
+  "expected": [
+    "tool_error == 'invalid_parameter'",
+    "no defect file written"
+  ]
+}

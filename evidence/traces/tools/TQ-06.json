@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-09-24T16:04:04.135903+00:00",
+  "tag": "TQ-06",
+  "mode": "dispatch",
+  "tool": "create_defect_report",
+  "arguments": {
+    "story_id": "US-08",
+    "rule_id": "R-04",
+    "title": "Year 3 load of 6 units accepted",
+    "description": "Registration of 6 units in Year 3 should be rejected under R-04.",
+    "severity": "high",
+    "status": "approved"
+  },
+  "inject": null,
+  "result": {
+    "tool_error": "unauthorized",
+    "tool": "create_defect_report",
+    "message": "create_defect_report cannot set status; drafts are always pending_review. Approving a defect is a human-only action (status='approved')."
+  },
+  "expected": [
+    "tool_error == 'unauthorized'",
+    "no file written under evidence/defects/ for this call"
+  ]
+}

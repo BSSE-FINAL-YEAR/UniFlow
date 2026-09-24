@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-09-24T16:04:04.134887+00:00",
+  "tag": "TQ-04",
+  "mode": "dispatch",
+  "tool": "check_course_load",
+  "arguments": {
+    "year_of_study": 3,
+    "units_requested": 5
+  },
+  "inject": null,
+  "result": {
+    "ok": true,
+    "rule": "R-04",
+    "message": "Course load 5 within Year 3 limit of 5",
+    "value": {
+      "limit": 5
+    }
+  },
+  "expected": [
+    "ok == true",
+    "rule == 'R-04'",
+    "value.limit == 5"
+  ]
+}
