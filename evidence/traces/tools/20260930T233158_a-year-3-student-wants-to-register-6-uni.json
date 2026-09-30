@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-09-30T23:31:58.203000+00:00",
+  "request": "A Year 3 student wants to register 6 units. Check the load rule and tell me the result.",
+  "tag": "",
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 6
+        },
+        "answer": "",
+        "reason": ""
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 6
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 6 exceeds Year 3 maximum of 5",
+        "value": null
+      }
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "ok",
+        "tool": "",
+        "arguments": {},
+        "answer": "The registration check failed under rule R-04: requested course load of 6 units exceeds the Year 3 maximum limit of 5 units.",
+        "reason": ""
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 6
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 6 exceeds Year 3 maximum of 5",
+        "value": null
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\"status\": \"tool_call\", \"tool\": \"check_course_load\", \"arguments\": {\"year_of_study\": 3, \"units_requested\": 6}, \"answer\": \"\", \"reason\": \"\"}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 3993,
+      "prompt_tokens": 550,
+      "completion_tokens": 47,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\n  \"status\": \"ok\",\n  \"tool\": \"\",\n  \"arguments\": {},\n  \"answer\": \"The registration check failed under rule R-04: requested course load of 6 units exceeds the Year 3 maximum limit of 5 units.\",\n  \"reason\": \"\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 2886,
+      "prompt_tokens": 712,
+      "completion_tokens": 65,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "ok",
+    "tool": "",
+    "arguments": {},
+    "answer": "The registration check failed under rule R-04: requested course load of 6 units exceeds the Year 3 maximum limit of 5 units.",
+    "reason": ""
+  }
+}
