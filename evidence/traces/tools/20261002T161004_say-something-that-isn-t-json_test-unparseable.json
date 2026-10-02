@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-10-02T16:10:04.753637+00:00",
+  "request": "Say something that isn't JSON",
+  "tag": "test-unparseable",
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": null,
+      "schema_errors": [
+        "no further scripted turn"
+      ]
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "scripted": true,
+      "error": "no further scripted turn",
+      "text": ""
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": false,
+    "json_parsed_after_repair": false,
+    "schema_errors": [
+      "no further scripted turn"
+    ]
+  },
+  "parsed_output": {
+    "status": "partial",
+    "tool": "",
+    "arguments": {},
+    "answer": "Stopped: the model did not produce a usable response.",
+    "reason": "no parseable terminal status before the loop ended"
+  }
+}

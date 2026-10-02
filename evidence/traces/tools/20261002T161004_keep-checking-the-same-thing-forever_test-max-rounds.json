@@ -1,0 +1,150 @@
+{
+  "timestamp": "2026-10-02T16:10:04.750943+00:00",
+  "request": "Keep checking the same thing forever",
+  "tag": "test-max-rounds",
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "(misbehaving model keeps asking for the same tool)"
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      }
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "(misbehaving model keeps asking for the same tool)"
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 1,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      }
+    },
+    {
+      "round": 2,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "(misbehaving model keeps asking for the same tool)"
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      }
+    },
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "scripted": true,
+      "text": "{\"status\": \"tool_call\", \"tool\": \"check_course_load\", \"arguments\": {\"year_of_study\": 3, \"units_requested\": 5}, \"answer\": \"\", \"reason\": \"(misbehaving model keeps asking for the same tool)\"}",
+      "error": null,
+      "latency_ms": 0
+    },
+    {
+      "scripted": true,
+      "text": "{\"status\": \"tool_call\", \"tool\": \"check_course_load\", \"arguments\": {\"year_of_study\": 3, \"units_requested\": 5}, \"answer\": \"\", \"reason\": \"(misbehaving model keeps asking for the same tool)\"}",
+      "error": null,
+      "latency_ms": 0
+    },
+    {
+      "scripted": true,
+      "text": "{\"status\": \"tool_call\", \"tool\": \"check_course_load\", \"arguments\": {\"year_of_study\": 3, \"units_requested\": 5}, \"answer\": \"\", \"reason\": \"(misbehaving model keeps asking for the same tool)\"}",
+      "error": null,
+      "latency_ms": 0
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "partial",
+    "tool": "",
+    "arguments": {},
+    "answer": "Stopped: reached the maximum of 2 tool call(s) for this request before a final answer was reached.",
+    "reason": "max_rounds (2) exhausted; see tool_results for what was gathered"
+  }
+}
