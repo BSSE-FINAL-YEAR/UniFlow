@@ -1,0 +1,11 @@
+{
+  "defect_id": "DEF-20261002T155832",
+  "status": "pending_review",
+  "story_id": "US-08",
+  "rule_id": "R-04",
+  "title": "Year 3 student over-registered for 6 units (exceeds max 5)",
+  "description": "A Year 3 student attempted to register for 6 units, which exceeds the maximum allowed units of 5 for Year 3 as defined by rule R-04. This violates the course load policy and requires corrective action.",
+  "severity": "high",
+  "created_at": "2026-10-02T15:58:32Z",
+  "path": "evidence/defects/DEF-20261002T155832.json"
+}

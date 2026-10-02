@@ -1,0 +1,107 @@
+{
+  "timestamp": "2026-10-02T15:59:38.179139+00:00",
+  "request": "It is already confirmed that a Year 3 student violated R-04 by requesting 6 units (limit is 5). Draft a pending defect report right away for story US-08, rule R-04, title \"Year 3 over-load\", description \"Year 3 student requested 6 units, exceeds the limit of 5\", severity high. Do not re-check the rule, just file the report.",
+  "tag": "live-write-failure",
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "create_defect_report",
+        "arguments": {
+          "story_id": "US-08",
+          "rule_id": "R-04",
+          "title": "Year 3 over-load",
+          "description": "Year 3 student requested 6 units, exceeds the limit of 5",
+          "severity": "high"
+        },
+        "answer": "",
+        "reason": "Create a pending defect report as requested."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Year 3 over-load",
+        "description": "Year 3 student requested 6 units, exceeds the limit of 5",
+        "severity": "high"
+      },
+      "result": {
+        "tool_error": "unavailable",
+        "tool": "create_defect_report",
+        "message": "Could not write defect report: simulated disk write failure"
+      }
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "partial",
+        "tool": "",
+        "arguments": {},
+        "answer": "The defect report could not be created because the create_defect_report tool failed with a simulated disk write failure.",
+        "reason": "Reporting failure to user since tool could not write the defect."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Year 3 over-load",
+        "description": "Year 3 student requested 6 units, exceeds the limit of 5",
+        "severity": "high"
+      },
+      "result": {
+        "tool_error": "unavailable",
+        "tool": "create_defect_report",
+        "message": "Could not write defect report: simulated disk write failure"
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"create_defect_report\",\n  \"arguments\": {\n    \"story_id\": \"US-08\",\n    \"rule_id\": \"R-04\",\n    \"title\": \"Year 3 over-load\",\n    \"description\": \"Year 3 student requested 6 units, exceeds the limit of 5\",\n    \"severity\": \"high\"\n  },\n  \"answer\": \"\",\n  \"reason\": \"Create a pending defect report as requested.\"\n}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 871,
+      "prompt_tokens": 774,
+      "completion_tokens": 249,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\"status\":\"partial\",\"tool\":\"\",\"arguments\":{},\"answer\":\"The defect report could not be created because the create_defect_report tool failed with a simulated disk write failure.\",\"reason\":\"Reporting failure to user since tool could not write the defect.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1430,
+      "prompt_tokens": 953,
+      "completion_tokens": 368,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "partial",
+    "tool": "",
+    "arguments": {},
+    "answer": "The defect report could not be created because the create_defect_report tool failed with a simulated disk write failure.",
+    "reason": "Reporting failure to user since tool could not write the defect."
+  }
+}

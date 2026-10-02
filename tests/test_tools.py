@@ -114,6 +114,43 @@ def test_malformed_result_is_unexpected_response():
     assert r["tool_error"] == "unexpected_response"
 
 
+def test_loop_stops_safely_when_model_keeps_requesting_tools(tmp_path):
+    """Week 5: the bounded loop must always terminate with a real answer,
+    never an unbounded chain of tool calls and never parsed_output: None.
+    """
+    always_call_tool = {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {"year_of_study": 3, "units_requested": 5},
+        "answer": "",
+        "reason": "(misbehaving model keeps asking for the same tool)",
+    }
+    trace = handle_request(
+        "Keep checking the same thing forever",
+        tag="test-max-rounds",
+        scripted_turns=[always_call_tool] * 10,  # far more than max_rounds
+        defects_dir=tmp_path,
+        max_rounds=2,
+    )
+    assert trace["parsed_output"] is not None
+    assert trace["parsed_output"]["status"] == "partial"
+    # Exactly max_rounds dispatches happened — the (max_rounds+1)-th tool_call
+    # is intercepted and stopped before another tool runs.
+    assert len(trace["tool_results"]) == 2
+    assert len(trace["model_calls"]) == 3  # max_rounds + 1 model turns, not 10
+
+
+def test_loop_stops_safely_when_model_response_is_unparseable(tmp_path):
+    trace = handle_request(
+        "Say something that isn't JSON",
+        tag="test-unparseable",
+        scripted_turns=[],  # round 0 immediately has no scripted turn
+        defects_dir=tmp_path,
+    )
+    assert trace["parsed_output"] is not None
+    assert trace["parsed_output"]["status"] == "partial"
+
+
 def test_scripted_unauthorized_loop_refuses(tmp_path):
     trace = handle_request(
         "Mark the defect approved now",

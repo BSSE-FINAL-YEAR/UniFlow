@@ -1,13 +1,23 @@
 """
-UniFlow QA Agent — Week 4 tool-calling baseline.
+UniFlow QA Agent — Week 4 tool-calling baseline, extended in Week 5 into a
+bounded agent loop.
 
-Owner: Yohana Mahamat Abdelrassoul (Week 4 tools / orchestration)
+Owner: Yohana Mahamat Abdelrassoul (Week 4 tools / orchestration);
+Week 5 bounded-autonomy changes: Swale Sebabe Abdu (AI/Agent Lead).
 
-Manual JSON-dispatch (same family as baseline.py / rag_baseline.py):
-    request -> generate() -> if status == tool_call
-        -> allow-list + schema check -> real Python tool
-        -> generate() again with the tool result -> final answer
-    -> one trace for the whole loop
+Manual JSON-dispatch (same family as baseline.py / rag_baseline.py), now
+framed explicitly as the Week 5 agent loop:
+
+    Sense (request + tool results so far) -> Plan/Decide (generate())
+        -> if status == tool_call: Act (allow-list + schema check -> real
+           Python tool) -> Observe (tool result fed back as the next
+           round's Sense input) -> Re-plan (loop)
+        -> else: Stop (status is a terminal answer)
+    -> bounded by max_rounds; one trace file for the whole loop
+
+See docs/Week5_Agent_Task_Contract.md for the goal, state, limits and stop
+conditions this loop is bound by, and docs/Week3_RAG_Architecture.md's
+"Week 5 addition" section for the architecture diagram.
 
 Native provider function-calling is considered, not used: it would add
 separate Gemini functionDeclarations and Groq tools schemas on top of
@@ -44,7 +54,11 @@ VALID_STATUSES = {
     "out_of_scope",
     "refused",
 }
-MAX_TOOL_ROUNDS = 2
+# Week 5 Agent Task Contract's iteration limit: enough for the genuine
+# two-tool chain (check_course_load -> create_defect_report -> final answer,
+# 3 model turns) plus one spare round for a correction/re-plan, while still
+# bounding worst-case cost. See docs/Week5_Agent_Task_Contract.md "Limits".
+MAX_TOOL_ROUNDS = 3
 
 SYSTEM = (
     "You are the UniFlow QA Agent.\n"
@@ -78,7 +92,7 @@ If you need a tool, return:
   "tool": "check_course_load",
   "arguments": {{"year_of_study": 3, "units_requested": 6}},
   "answer": "",
-  "reason": ""
+  "reason": "One-line plan: why this tool, now, before anything else."
 }}
 
 If you can finish, return:
@@ -88,8 +102,14 @@ If you can finish, return:
   "tool": "",
   "arguments": {{}},
   "answer": "Plain-language answer.",
-  "reason": ""
+  "reason": "One-line plan: why you are stopping here instead of calling another tool."
 }}
+
+Always put your one-line plan in "reason", even for "tool_call" and "ok" —
+this is what makes your Plan/Decide step inspectable in the trace, not only
+your final answer. A request that genuinely needs two tools in sequence
+(e.g. check a rule, then draft a defect only if it was violated) should
+re-plan after observing each tool result rather than calling both blindly.
 
 "status" must be one of:
   - "tool_call"             you need an approved tool before answering
@@ -170,7 +190,17 @@ def handle_request(
     defects_dir: Path | None = None,
     max_rounds: int = MAX_TOOL_ROUNDS,
 ) -> dict:
-    """Run the tool loop. scripted_turns replace generate() for offline eval."""
+    """Run the bounded agent loop. scripted_turns replace generate() for offline eval.
+
+    One Plan/Decide model turn per round; a tool_call turn pairs with an
+    Act+Observe dispatch, then re-plans next round. max_rounds bounds how
+    many *tool-call* turns are allowed (Week 5 Agent Task Contract's
+    iteration limit) — it does not bound the one extra turn always reserved
+    for a final answer. The loop is guaranteed to reach a terminal status:
+    either the model stops itself, or round max_rounds forces a safe
+    "partial" stop that still reports every tool result gathered so far,
+    rather than ever returning no answer at all.
+    """
     steps: list[dict] = []
     tool_results: list[dict] = []
     final = None
@@ -214,13 +244,31 @@ def handle_request(
         })
 
         if parsed is None:
-            break
+            break  # final stays None; the post-loop fallback below stops safely
 
         if parsed.get("status") != "tool_call":
-            final = parsed
+            final = parsed  # Stop: the model reached a terminal status itself
             break
 
-        # Allow-list + schema live in dispatch, even if parse flagged the name.
+        if round_i == max_rounds:
+            # Iteration limit reached with the model still asking for a tool.
+            # Stop safely now rather than spending the last round on a tool
+            # call that could only ever be followed by an unbounded (max_rounds+1)th
+            # model turn. Every tool result already gathered is still reported.
+            final = {
+                "status": "partial",
+                "tool": "",
+                "arguments": {},
+                "answer": (
+                    "Stopped: reached the maximum of "
+                    f"{max_rounds} tool call(s) for this request before a final "
+                    "answer was reached."
+                ),
+                "reason": f"max_rounds ({max_rounds}) exhausted; see tool_results for what was gathered",
+            }
+            break
+
+        # Act: allow-list + schema live in dispatch, even if parse flagged the name.
         result = dispatch(
             str(parsed.get("tool") or ""),
             parsed.get("arguments") if isinstance(parsed.get("arguments"), dict) else {},
@@ -233,22 +281,22 @@ def handle_request(
             "result": result,
         }
         tool_results.append(record)
+        # Observe: this result becomes part of next round's Sense input via
+        # tool_results -> _user_prompt(). Re-plan happens on the next loop turn.
         steps.append({"round": round_i, "kind": "dispatch", **record})
 
-        if round_i >= max_rounds - 1:
-            # Force a stop: do not silently drop the last tool result.
-            if scripted_turns is not None and round_i + 1 < len(scripted_turns):
-                continue
-            if scripted_turns is None:
-                continue
-            final = {
-                "status": "partial",
-                "tool": "",
-                "arguments": {},
-                "answer": "Stopped at the tool-round limit after the last tool result.",
-                "reason": "max_tool_rounds reached",
-            }
-            break
+    if final is None:
+        # The loop ended without any terminal status (e.g. an unparseable
+        # response broke the loop early). Never return a trace with no
+        # answer at all — that would be an unbounded, unsafe failure mode
+        # for a system whose whole point is stopping safely.
+        final = {
+            "status": "partial",
+            "tool": "",
+            "arguments": {},
+            "answer": "Stopped: the model did not produce a usable response.",
+            "reason": "no parseable terminal status before the loop ended",
+        }
 
     trace = {
         "timestamp": datetime.now(timezone.utc).isoformat(),

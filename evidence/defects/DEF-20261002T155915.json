@@ -1,0 +1,11 @@
+{
+  "defect_id": "DEF-20261002T155915",
+  "status": "pending_review",
+  "story_id": "US-08",
+  "rule_id": "R-04",
+  "title": "Year 3 over-load",
+  "description": "Year 3 student requested 6 units, exceeds the limit",
+  "severity": "high",
+  "created_at": "2026-10-02T15:59:15Z",
+  "path": "evidence/defects/DEF-20261002T155915.json"
+}

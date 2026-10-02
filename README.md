@@ -43,7 +43,8 @@ Those boundaries come from Week 1’s AI Boundary Matrix and `prompts/context/un
 | 2 | Foundation-model baseline: generate structured test cases from a story + rule pack | `src/baseline.py`, `prompts/`, `eval/prompt_eval_cases.json` |
 | 3 | RAG: answer only from retrieved chunks, with `doc_id` citations | `src/rag/`, `src/rag_baseline.py`, `knowledge/` |
 | 4 | Tools: `check_course_load` and `create_defect_report`, allow-list, human approval | `src/tools/`, `src/tool_baseline.py`, `docs/Week4_Tool_Catalogue.md` |
-| 5–8 | Bounded agent loop, memory, evaluation/guardrails, final release | Not built yet |
+| 5 | Bounded agent: same two tools, explicit Sense→Plan→Act→Observe→Stop loop, max-iteration stop condition, re-planning on a task that needs it | `src/tool_baseline.py`, `docs/Week5_Agent_Task_Contract.md`, `docs/Week3_RAG_Architecture.md` ("Week 5 addition") |
+| 6–8 | Memory/state, interoperability, evaluation/guardrails, final release | Not built yet |
 
 ---
 
@@ -106,6 +107,15 @@ python src/tool_eval_runner.py
 
 Year 3 maximum is **5 units** (R-04). The live demo should call `check_course_load` and answer from the tool result, not from memory.
 
+**Week 5 — bounded agent loop (needs a key)**
+
+```text
+python src/tool_baseline.py --request "A Year 3 student wants to register for 6 units. Check whether that's allowed under our rules, and if it isn't, draft a defect report for QA to review (story US-08, rule R-04)."
+python src/tool_baseline.py --request "A Year 2 student wants to register for 6 units. Check whether that's allowed under our rules. Only draft a defect report if it's actually a violation."
+```
+
+The first request needs **two** tools in sequence (`check_course_load` then `create_defect_report`); the second needs only one — the agent must observe the first tool's result before deciding whether the second call is warranted at all. See `docs/Week5_Agent_Task_Contract.md` for the goal, limits and stop conditions, and `docs/Week3_RAG_Architecture.md`'s "Week 5 addition" for the Sense→Plan→Act→Observe→Stop diagram.
+
 **Human-only defect review (not a tool)**
 
 ```text
@@ -165,6 +175,7 @@ Tool contracts: `docs/Week4_Tool_Catalogue.md`
 | 2 | `UniFlow_Week2_Progress_Report.docx` | `UniFlow_Week2_Prompt_Evaluation_Table.docx`, `eval/results_v1.*.csv` |
 | 3 | `UniFlow_Week3_Progress_Report.docx` | `eval/rag_results_v1.0.csv`, `evidence/traces/rag/` |
 | 4 | `UniFlow_Week4_Progress_Report.docx` | `eval/tool_results_v1.0.csv`, `evidence/traces/tools/` |
+| 5 | `UniFlow_Week5_Progress_Report.docx` | `docs/Week5_Agent_Task_Contract.md`, `evidence/traces/tools/` (3 new live traces) |
 
 Task board: [ClickUp — UniFlow](https://app.clickup.com/1200410000004069/v/li/1200410000007523)
 

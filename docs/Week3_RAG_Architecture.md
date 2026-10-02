@@ -149,4 +149,59 @@ express cleanly.
 | Human-only approval | `scripts/review_defect.py` (not a tool) |
 | Evaluation | `eval/tool_eval_cases.json`, `src/tool_eval_runner.py` |
 | Traces | `evidence/traces/tools/` |
+
+---
+
+# Week 5 addition — bounded agent loop (Sense → Plan → Act → Observe → Stop)
+
+Week 4's tool-calling loop already *was* an agent loop in substance; Week 5
+makes the five stages explicit, fixes a real gap in how it stopped, and
+exercises it on a task that genuinely needs re-planning rather than a fixed
+two-call sequence. See `docs/Week5_Agent_Task_Contract.md` for the goal,
+state, limits and stop conditions this diagram implements.
+
+```mermaid
+flowchart TD
+    REQ["Request"] --> SENSE["Sense<br/>request + tool_results so far<br/>(_user_prompt)"]
+    SENSE --> PLAN["Plan/Decide<br/>llm_client.generate()<br/>reason field = one-line plan"]
+    PLAN -->|"status != tool_call"| STOP["Stop<br/>ok / partial / insufficient_context /<br/>out_of_scope / refused"]
+    PLAN -->|"status == tool_call<br/>AND round < max_rounds"| ACT["Act<br/>allow-list + schema check<br/>(src/tools/dispatch.py)<br/>then the real Python tool"]
+    PLAN -->|"status == tool_call<br/>AND round == max_rounds"| LIMIT["Stop: partial<br/>iteration limit reached<br/>(Week 5 fix — see below)"]
+    ACT --> OBSERVE["Observe<br/>tool result appended to tool_results"]
+    OBSERVE --> SENSE
+    STOP --> TR["evidence/traces/tools/*.json"]
+    LIMIT --> TR
+```
+
+**The Week 5 fix.** Before this week, a `tool_call` arriving on the last
+allowed round fell through to `continue` in *live* mode — the loop kept
+going past `max_rounds` with no enforced ceiling, and if the model never
+volunteered a terminal status, `handle_request()` could return
+`parsed_output: None`: a trace with no answer at all, for a system whose
+entire premise is bounded, explainable autonomy. `handle_request()` now
+intercepts a `tool_call` at `round == max_rounds` *before* dispatching it,
+stopping with `status: "partial"` and every tool result gathered so far —
+and a final fallback guarantees `parsed_output` is never `None` even if the
+model's response is unparseable. Regression tests:
+`tests/test_tools.py::test_loop_stops_safely_when_model_keeps_requesting_tools`
+and `::test_loop_stops_safely_when_model_response_is_unparseable`.
+
+**Why this needed a genuine two-tool task, not just a longer loop.** Simply
+raising `MAX_TOOL_ROUNDS` would not demonstrate multi-step *decision*
+making — a loop that always calls both tools regardless of the first
+result isn't planning, it's a fixed script. The Week 5 task (check a
+course-load request, draft a defect *only if* it is violated) requires the
+agent to Observe the first tool's result and Re-plan from it: call a second
+tool, or stop having decided no further action is warranted. Both branches
+are captured in this week's traces — see `docs/Week5_Agent_Task_Contract.md`.
+
+## Week 5 file map
+
+| Stage | File |
+|---|---|
+| Task contract | `docs/Week5_Agent_Task_Contract.md` |
+| Agent loop (extended) | `src/tool_baseline.py` — `handle_request()` |
+| Tools (unchanged from Week 4) | `src/tools/check_course_load.py`, `src/tools/create_defect_report.py` |
+| New regression tests | `tests/test_tools.py` (safe-stop behaviour) |
+| Execution traces | `evidence/traces/tools/` (three new traces, see the task contract) |
 | Draft records | `evidence/defects/` |
