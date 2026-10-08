@@ -1,0 +1,11 @@
+{
+  "defect_id": "DEF-20261008T130552",
+  "status": "pending_review",
+  "story_id": "US-08",
+  "rule_id": "R-04",
+  "title": "Year 3 student registered 6 units",
+  "description": "R-04 caps Year 3 at 5 units; 6 units was requested and rejected.",
+  "severity": "high",
+  "created_at": "2026-10-08T13:05:52Z",
+  "path": "evidence/defects/DEF-20261008T130552.json"
+}

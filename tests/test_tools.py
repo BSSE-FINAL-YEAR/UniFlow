@@ -61,6 +61,7 @@ def test_status_approved_is_unauthorized_and_writes_nothing(tmp_path):
             "status": "approved",
         },
         defects_dir=tmp_path,
+        memory_store=tmp_path / "memory.json",
     )
     assert r["tool_error"] == "unauthorized"
     assert list(tmp_path.glob("*.json")) == before
@@ -82,6 +83,7 @@ def test_create_defect_writes_pending_review_only(tmp_path):
             "severity": "high",
         },
         defects_dir=tmp_path,
+        memory_store=tmp_path / "memory.json",
     )
     assert r["status"] == "pending_review"
     on_disk = json.loads((tmp_path / f"{r['defect_id']}.json").read_text(encoding="utf-8"))
@@ -89,7 +91,7 @@ def test_create_defect_writes_pending_review_only(tmp_path):
     assert "approved" not in json.dumps(on_disk)
 
 
-def test_write_failure_is_unavailable():
+def test_write_failure_is_unavailable(tmp_path):
     r = dispatch(
         "create_defect_report",
         {
@@ -100,9 +102,95 @@ def test_write_failure_is_unavailable():
             "severity": "low",
         },
         inject="write_failure",
+        memory_store=tmp_path / "memory.json",
     )
     assert r["tool_error"] == "unavailable"
     assert "defect_id" not in r
+
+
+def test_duplicate_defect_is_not_rewritten(tmp_path):
+    """Week 6: the same (rule_id, story_id) violation, reported twice, must
+    not produce two files — the second call should point at the first
+    defect_id instead of writing a near-duplicate.
+    """
+    defects_dir = tmp_path / "defects"
+    memory_store = tmp_path / "memory.json"
+    args = {
+        "story_id": "US-08",
+        "rule_id": "R-04",
+        "title": "Year 3 registered 6 units",
+        "description": "Exceeds R-04 Year 3 cap of 5.",
+        "severity": "high",
+    }
+
+    first = dispatch("create_defect_report", args, defects_dir=defects_dir, memory_store=memory_store)
+    assert first["status"] == "pending_review"
+    assert "duplicate_of" not in first
+    assert len(list(defects_dir.glob("*.json"))) == 1
+
+    second = dispatch("create_defect_report", args, defects_dir=defects_dir, memory_store=memory_store)
+    assert second["defect_id"] == first["defect_id"]
+    assert second["duplicate_of"] == first["defect_id"]
+    # Still exactly one file — the duplicate call never reached the writer.
+    assert len(list(defects_dir.glob("*.json"))) == 1
+
+
+def test_different_violations_are_not_treated_as_duplicates(tmp_path):
+    defects_dir = tmp_path / "defects"
+    memory_store = tmp_path / "memory.json"
+    first = dispatch(
+        "create_defect_report",
+        {
+            "story_id": "US-08",
+            "rule_id": "R-04",
+            "title": "Year 3 over-load",
+            "description": "6 units in Year 3.",
+            "severity": "high",
+        },
+        defects_dir=defects_dir,
+        memory_store=memory_store,
+    )
+    second = dispatch(
+        "create_defect_report",
+        {
+            "story_id": "US-09",
+            "rule_id": "R-07",
+            "title": "Duplicate course registration",
+            "description": "Unrelated violation.",
+            "severity": "medium",
+        },
+        defects_dir=defects_dir,
+        memory_store=memory_store,
+    )
+    assert second["defect_id"] != first["defect_id"]
+    assert "duplicate_of" not in second
+    assert len(list(defects_dir.glob("*.json"))) == 2
+
+
+def test_default_memory_store_is_never_touched_when_isolated(tmp_path, monkeypatch):
+    """Guard against the real risk this feature introduced: without an
+    isolated memory_store, a dispatch-mode eval case (e.g. Week 4's TQ-13)
+    would silently start returning duplicate_of on every re-run. Every
+    dispatch call in this test file must pass its own memory_store — this
+    test fails loudly if the default store is ever reached unexpectedly.
+    """
+    import memory.case_history as case_history
+
+    monkeypatch.setattr(case_history, "DEFAULT_STORE", tmp_path / "should-not-be-used.json")
+    r = dispatch(
+        "create_defect_report",
+        {
+            "story_id": "US-08",
+            "rule_id": "R-04",
+            "title": "x",
+            "description": "y",
+            "severity": "low",
+        },
+        defects_dir=tmp_path,
+        memory_store=tmp_path / "memory.json",
+    )
+    assert r["status"] == "pending_review"
+    assert not (tmp_path / "should-not-be-used.json").exists()
 
 
 def test_malformed_result_is_unexpected_response():
@@ -130,6 +218,7 @@ def test_loop_stops_safely_when_model_keeps_requesting_tools(tmp_path):
         tag="test-max-rounds",
         scripted_turns=[always_call_tool] * 10,  # far more than max_rounds
         defects_dir=tmp_path,
+        memory_store=tmp_path / "memory.json",
         max_rounds=2,
     )
     assert trace["parsed_output"] is not None
@@ -146,6 +235,7 @@ def test_loop_stops_safely_when_model_response_is_unparseable(tmp_path):
         tag="test-unparseable",
         scripted_turns=[],  # round 0 immediately has no scripted turn
         defects_dir=tmp_path,
+        memory_store=tmp_path / "memory.json",
     )
     assert trace["parsed_output"] is not None
     assert trace["parsed_output"]["status"] == "partial"
@@ -179,6 +269,7 @@ def test_scripted_unauthorized_loop_refuses(tmp_path):
             },
         ],
         defects_dir=tmp_path,
+        memory_store=tmp_path / "memory.json",
     )
     assert trace["tool_results"][0]["result"]["tool_error"] == "unauthorized"
     assert trace["parsed_output"]["status"] == "refused"

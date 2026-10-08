@@ -205,3 +205,50 @@ are captured in this week's traces — see `docs/Week5_Agent_Task_Contract.md`.
 | New regression tests | `tests/test_tools.py` (safe-stop behaviour) |
 | Execution traces | `evidence/traces/tools/` (three new traces, see the task contract) |
 | Draft records | `evidence/defects/` |
+
+---
+
+# Week 6 addition — explicit state, persistent memory
+
+Two separate things, not one, per `docs/Week6_State_Model.md`:
+
+```mermaid
+flowchart LR
+    subgraph "One handle_request() call — ephemeral"
+        SS["SessionState<br/>(src/tool_baseline.py)<br/>steps, tool_results,<br/>model_calls, status"]
+    end
+    subgraph "Across every request — persistent"
+        CH["data/memory/case_history.json<br/>(src/memory/case_history.py)"]
+    end
+
+    REQ["Request"] --> SS
+    SS -->|"Act: create_defect_report"| DISP["dispatch()"]
+    DISP -->|"find_prior_defect()"| CH
+    CH -->|"match found"| DUP["Return duplicate_of,<br/>write nothing new"]
+    CH -->|"no match"| WRITE["Write new defect,<br/>remember_defect()"]
+    WRITE --> CH
+    DISP --> SS
+    SS -->|"trace written, then discarded"| TR["evidence/traces/tools/*.json"]
+```
+
+`SessionState` is the Week 4-5 loop's own bookkeeping, now named instead of
+four loose local variables — it never outlives one `handle_request()` call.
+`case_history.json` is new: it is the one thing in this system that
+deliberately does survive between separate, unrelated requests, and it
+exists for exactly one reason — not reporting the same R-04 violation as a
+fresh defect every time it recurs. It does not touch rule enforcement,
+authorization, or anything `check_course_load` / `create_defect_report`
+already owned.
+
+## Week 6 file map
+
+| Stage | File |
+|---|---|
+| State model | `docs/Week6_State_Model.md`, `SessionState` in `src/tool_baseline.py` |
+| Memory design note | `docs/Week6_Memory_Design.md` |
+| Memory module | `src/memory/case_history.py` |
+| Memory wiring | `src/tools/dispatch.py` (`create_defect_report` branch only) |
+| MCP-style interface spec | `docs/Week6_MCP_Interface.md` |
+| New tests | `tests/test_memory.py`; dedup/isolation tests added to `tests/test_tools.py` |
+| Demonstration traces | `evidence/traces/tools/*week6-memory-demo*.json` |
+| Persistent store | `data/memory/case_history.json` |

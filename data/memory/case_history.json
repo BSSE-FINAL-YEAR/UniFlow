@@ -1,0 +1,11 @@
+{
+  "R-04:US-08": {
+    "rule_id": "R-04",
+    "story_id": "US-08",
+    "defect_id": "DEF-20261008T130552",
+    "path": "evidence/defects/DEF-20261008T130552.json",
+    "first_seen": "2026-10-08T13:05:52Z",
+    "last_seen": "2026-10-08T13:05:52Z",
+    "times_seen": 2
+  }
+}

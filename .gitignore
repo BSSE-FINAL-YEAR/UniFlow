@@ -3,5 +3,8 @@
 __pycache__/
 *.pyc
 
+# Reset every tool_eval_runner.py run — not a deliverable, see its docstring.
+eval/_tool_eval_memory_store.json
+
 # Local ClickUp attachments only — do not publish
 docs/Week4_ClickUp_*.docx

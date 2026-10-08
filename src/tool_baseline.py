@@ -35,6 +35,7 @@ import argparse
 import json
 import re
 import sys
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -124,6 +125,78 @@ Never guess a missing tool argument. Never call a tool that is not listed.
 """
 
 
+@dataclass
+class SessionState:
+    """Week 6: explicit model of one handle_request() call's workflow state.
+
+    Before Week 6 this was four loose local variables (steps, tool_results,
+    model_calls, final) threaded through the loop body by hand. Naming and
+    typing them is what "model workflow/session state explicitly" asks for
+    — the loop's behaviour is unchanged, only its state now has a real,
+    inspectable shape instead of implicit bookkeeping. See
+    docs/Week6_State_Model.md for the full write-up.
+
+    Scope and lifetime: one handle_request() call. Created at the top of
+    the loop, mutated once per round, serialised into a trace file, then
+    discarded — nothing here survives past the function return. That is
+    the deliberate contrast with src/memory/case_history.py, the new Week 6
+    persistent store that *does* survive across separate requests. A
+    SessionState is the agent's short-term working memory for one task;
+    case_history is its long-term memory of past outcomes.
+    """
+
+    request: str
+    tag: str = ""
+    steps: list[dict] = field(default_factory=list)
+    tool_results: list[dict] = field(default_factory=list)
+    model_calls: list[dict] = field(default_factory=list)
+    status: str = "in_progress"
+    final: dict | None = None
+    last_validation: dict | None = None
+    started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    ended_at: str | None = None
+
+    def record_model_turn(self, round_i: int, model_record: dict, validation: dict) -> None:
+        self.last_validation = validation
+        self.model_calls.append(model_record)
+        self.steps.append({
+            "round": round_i,
+            "kind": "model",
+            "parsed": validation["parsed"],
+            "schema_errors": list(validation["schema_errors"]),
+        })
+
+    def record_dispatch(self, round_i: int, tool: str | None, arguments: dict | None, result: dict) -> None:
+        record = {"tool": tool, "arguments": arguments, "result": result}
+        self.tool_results.append(record)
+        self.steps.append({"round": round_i, "kind": "dispatch", **record})
+
+    def stop(self, final: dict) -> None:
+        """Reach a terminal status. Idempotent-safe: only the first call sets ended_at."""
+        self.final = final
+        self.status = final.get("status", "partial")
+        if self.ended_at is None:
+            self.ended_at = datetime.now(timezone.utc).isoformat()
+
+    def to_trace_dict(self) -> dict:
+        return {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "request": self.request,
+            "tag": self.tag,
+            "state": {
+                "status": self.status,
+                "started_at": self.started_at,
+                "ended_at": self.ended_at,
+                "rounds_used": len(self.tool_results),
+            },
+            "steps": self.steps,
+            "tool_results": self.tool_results,
+            "model_calls": self.model_calls,
+            "validation": {k: v for k, v in (self.last_validation or {}).items() if k != "parsed"},
+            "parsed_output": self.final,
+        }
+
+
 def parse_and_validate(raw: str) -> dict:
     report = {
         "json_parsed_first_try": False,
@@ -188,6 +261,7 @@ def handle_request(
     scripted_turns: list[dict] | None = None,
     inject: str | None = None,
     defects_dir: Path | None = None,
+    memory_store: Path | None = None,
     max_rounds: int = MAX_TOOL_ROUNDS,
 ) -> dict:
     """Run the bounded agent loop. scripted_turns replace generate() for offline eval.
@@ -201,17 +275,13 @@ def handle_request(
     "partial" stop that still reports every tool result gathered so far,
     rather than ever returning no answer at all.
     """
-    steps: list[dict] = []
-    tool_results: list[dict] = []
-    final = None
-    last_validation = None
-    model_calls = []
+    state = SessionState(request=request, tag=tag)
 
     for round_i in range(max_rounds + 1):
-        user = _user_prompt(request, tool_results)
+        user = _user_prompt(request, state.tool_results)
         if scripted_turns is not None:
             if round_i >= len(scripted_turns):
-                last_validation = {
+                validation = {
                     "json_parsed_first_try": False,
                     "json_parsed_after_repair": False,
                     "schema_errors": ["no further scripted turn"],
@@ -221,7 +291,7 @@ def handle_request(
                 model_record = {"scripted": True, "error": "no further scripted turn", "text": ""}
             else:
                 raw = json.dumps(scripted_turns[round_i])
-                last_validation = parse_and_validate(raw)
+                validation = parse_and_validate(raw)
                 model_record = {
                     "scripted": True,
                     "text": raw,
@@ -231,23 +301,17 @@ def handle_request(
         else:
             resp = generate(user=user, system=SYSTEM)
             raw = resp.text
-            last_validation = parse_and_validate(raw)
+            validation = parse_and_validate(raw)
             model_record = resp.to_dict()
 
-        model_calls.append(model_record)
-        parsed = last_validation["parsed"]
-        steps.append({
-            "round": round_i,
-            "kind": "model",
-            "parsed": parsed,
-            "schema_errors": list(last_validation["schema_errors"]),
-        })
+        state.record_model_turn(round_i, model_record, validation)
+        parsed = validation["parsed"]
 
         if parsed is None:
-            break  # final stays None; the post-loop fallback below stops safely
+            break  # state.final stays None; the post-loop fallback below stops safely
 
         if parsed.get("status") != "tool_call":
-            final = parsed  # Stop: the model reached a terminal status itself
+            state.stop(parsed)  # Stop: the model reached a terminal status itself
             break
 
         if round_i == max_rounds:
@@ -255,7 +319,7 @@ def handle_request(
             # Stop safely now rather than spending the last round on a tool
             # call that could only ever be followed by an unbounded (max_rounds+1)th
             # model turn. Every tool result already gathered is still reported.
-            final = {
+            state.stop({
                 "status": "partial",
                 "tool": "",
                 "arguments": {},
@@ -265,7 +329,7 @@ def handle_request(
                     "answer was reached."
                 ),
                 "reason": f"max_rounds ({max_rounds}) exhausted; see tool_results for what was gathered",
-            }
+            })
             break
 
         # Act: allow-list + schema live in dispatch, even if parse flagged the name.
@@ -274,40 +338,27 @@ def handle_request(
             parsed.get("arguments") if isinstance(parsed.get("arguments"), dict) else {},
             inject=inject if round_i == 0 else None,
             defects_dir=defects_dir,
+            memory_store=memory_store,
         )
-        record = {
-            "tool": parsed.get("tool"),
-            "arguments": parsed.get("arguments"),
-            "result": result,
-        }
-        tool_results.append(record)
         # Observe: this result becomes part of next round's Sense input via
-        # tool_results -> _user_prompt(). Re-plan happens on the next loop turn.
-        steps.append({"round": round_i, "kind": "dispatch", **record})
+        # state.tool_results -> _user_prompt(). Re-plan happens on the next
+        # loop turn.
+        state.record_dispatch(round_i, parsed.get("tool"), parsed.get("arguments"), result)
 
-    if final is None:
+    if state.final is None:
         # The loop ended without any terminal status (e.g. an unparseable
         # response broke the loop early). Never return a trace with no
         # answer at all — that would be an unbounded, unsafe failure mode
         # for a system whose whole point is stopping safely.
-        final = {
+        state.stop({
             "status": "partial",
             "tool": "",
             "arguments": {},
             "answer": "Stopped: the model did not produce a usable response.",
             "reason": "no parseable terminal status before the loop ended",
-        }
+        })
 
-    trace = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "request": request,
-        "tag": tag,
-        "steps": steps,
-        "tool_results": tool_results,
-        "model_calls": model_calls,
-        "validation": {k: v for k, v in (last_validation or {}).items() if k != "parsed"},
-        "parsed_output": final,
-    }
+    trace = state.to_trace_dict()
 
     TRACES.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
