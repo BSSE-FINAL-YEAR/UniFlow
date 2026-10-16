@@ -252,3 +252,39 @@ already owned.
 | New tests | `tests/test_memory.py`; dedup/isolation tests added to `tests/test_tools.py` |
 | Demonstration traces | `evidence/traces/tools/*week6-memory-demo*.json` |
 | Persistent store | `data/memory/case_history.json` |
+
+---
+
+# Week 7 addition — guardrails around the same loop
+
+Week 7 does not add a tool. It puts checks on either side of the Week 5 loop, and it makes the trace complete enough to score the run.
+
+```mermaid
+flowchart TD
+    REQ["Request"] --> IN["screen_request()<br/>empty / too long / control chars /<br/>prompt injection / prohibited action"]
+    IN -->|"blocked"| STOP1["Stop: refused or insufficient_context<br/>model_turns = 0"]
+    IN -->|"allowed"| RET["retrieve() top-4<br/>recorded on the trace and shown as context"]
+    RET --> LOOP["Week 5 loop<br/>Sense → Plan → Act → Observe<br/>max 3 tool calls"]
+    LOOP --> OUT["screen_output()<br/>status contract, tool contradiction,<br/>approval claim, ungrounded load, draft-as-rule"]
+    OUT -->|"findings"| STOP2["Stop: refused<br/>model text kept on the step, not as the outcome"]
+    OUT -->|"clean"| STOP3["Stop with the model's terminal status"]
+    STOP1 --> TR["Trace: prompts, retrieval, tools,<br/>latency, guardrail signals, metrics"]
+    STOP2 --> TR
+    STOP3 --> TR
+```
+
+`dispatch()` is unchanged: the allow-list, argument schema, and the ban on writing `approved` or `rejected` still live there. `screen_request()` does not treat "Mark the defect approved now" as an injection, so that request still reaches `dispatch()` and comes back `tool_error: unauthorized`.
+
+## Week 7 file map
+
+| Stage | File |
+|---|---|
+| Guardrails | `src/guardrails.py` |
+| Loop wiring and trace fields | `src/tool_baseline.py` |
+| Criteria | `docs/Week7_Evaluation_Criteria.md` |
+| What the guards cover | `docs/Week7_Guardrails.md` |
+| Five failures, fix, retest | `docs/Week7_Failures.md` |
+| 34 scenarios | `eval/final_eval_cases.json` |
+| Runner and results | `src/final_eval_runner.py`, `eval/final_results_v1.0.csv` |
+| Traces | `evidence/traces/week7/` |
+| Before / after the five fixes | `evidence/week7/before/`, `evidence/week7/after/` |

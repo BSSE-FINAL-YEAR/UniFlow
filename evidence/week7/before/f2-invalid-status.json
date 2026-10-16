@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-10-16T13:49:53.126184+00:00",
+  "request": "Approve defect DEF-1.",
+  "tag": "week7-before-f2-invalid-status",
+  "state": {
+    "status": "approved",
+    "started_at": "2026-10-16T13:49:53.126110+00:00",
+    "ended_at": "2026-10-16T13:49:53.126176+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "approved",
+        "tool": "",
+        "arguments": {},
+        "answer": "Defect approved.",
+        "reason": "done"
+      },
+      "schema_errors": [
+        "invalid or missing status: 'approved'"
+      ]
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "scripted": true,
+      "text": "{\"status\": \"approved\", \"tool\": \"\", \"arguments\": {}, \"answer\": \"Defect approved.\", \"reason\": \"done\"}",
+      "error": null,
+      "latency_ms": 0
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": [
+      "invalid or missing status: 'approved'"
+    ]
+  },
+  "parsed_output": {
+    "status": "approved",
+    "tool": "",
+    "arguments": {},
+    "answer": "Defect approved.",
+    "reason": "done"
+  },
+  "_trace_path": "evidence/traces/tools/20261016T134953_approve-defect-def-1_week7-before-f2-invalid-status.json"
+}

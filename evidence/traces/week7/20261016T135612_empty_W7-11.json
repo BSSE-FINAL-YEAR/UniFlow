@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-10-16T13:56:12.986183+00:00",
+  "request": "   ",
+  "tag": "W7-11",
+  "state": {
+    "status": "insufficient_context",
+    "started_at": "2026-10-16T13:56:12.985789+00:00",
+    "ended_at": "2026-10-16T13:56:12.986177+00:00",
+    "rounds_used": 0
+  },
+  "steps": [],
+  "tool_results": [],
+  "model_calls": [],
+  "validation": {},
+  "prompts": [],
+  "retrieval": [
+    {
+      "chunk_id": "KB-PROGRAMMES#1",
+      "doc_id": "KB-PROGRAMMES",
+      "title": "Programme reference data",
+      "provenance": "source-derived",
+      "status": "approved",
+      "score": 0.0,
+      "text": "Synthetic, team-created reference data for UniFlow's supported programmes (no real institutional data). UniFlow simulates two colleges: College of Computing and Information Sciences (CoCIS): - BSSE \u2014 BSc Software Engineering, 4 years - BSCS \u2014 BSc Computer Science, 3 years - BIST \u2014 BSc Information Systems Technology, 3 years College of Engineering, Art and Design (CEAD): - BCVE \u2014 BSc Civil Engineering, 4 years - BELE \u2014 BSc Electrical Engineering, 4"
+    },
+    {
+      "chunk_id": "KB-PROGRAMMES#2",
+      "doc_id": "KB-PROGRAMMES",
+      "title": "Programme reference data",
+      "provenance": "source-derived",
+      "status": "approved",
+      "score": 0.0,
+      "text": "Engineering, Art and Design (CEAD): - BCVE \u2014 BSc Civil Engineering, 4 years - BELE \u2014 BSc Electrical Engineering, 4 years - BQSV \u2014 BSc Quantity Surveying, 4 years - BMCE \u2014 BSc Mechanical Engineering, 4 years Programme codes for CEAD are team-assigned placeholders for the prototype, not official institutional codes. This document lists which programmes exist and how many years each takes. It deliberately does not restate which specific"
+    },
+    {
+      "chunk_id": "KB-PROGRAMMES#3",
+      "doc_id": "KB-PROGRAMMES",
+      "title": "Programme reference data",
+      "provenance": "source-derived",
+      "status": "approved",
+      "score": 0.0,
+      "text": "codes. This document lists which programmes exist and how many years each takes. It deliberately does not restate which specific year of which programme supports Evening study \u2014 that is a separate, approved business rule with its own provenance, kept in KB-R02-COMBINATIONS so the two facts (\"what programmes exist\" vs. \"which of them run in the evening\") have exactly one source each rather than two documents that could drift out"
+    },
+    {
+      "chunk_id": "KB-PROGRAMMES#4",
+      "doc_id": "KB-PROGRAMMES",
+      "title": "Programme reference data",
+      "provenance": "source-derived",
+      "status": "approved",
+      "score": 0.0,
+      "text": "\"which of them run in the evening\") have exactly one source each rather than two documents that could drift out of sync."
+    }
+  ],
+  "guardrails": {
+    "input_reasons": [
+      "empty_request"
+    ],
+    "injection": [],
+    "prohibited": [],
+    "output_findings": [],
+    "safety_violations": [
+      "empty_request"
+    ],
+    "blocked_before_model": true,
+    "grounded": "not_applicable"
+  },
+  "metrics": {
+    "latency_ms": 0,
+    "model_turns": 0,
+    "tool_calls": 0,
+    "tools_selected": [],
+    "instruction_following": "not_applicable",
+    "safety_violations": [
+      "empty_request"
+    ],
+    "grounded": "not_applicable",
+    "task_completion": true
+  },
+  "parsed_output": {
+    "status": "insufficient_context",
+    "tool": "",
+    "arguments": {},
+    "answer": "No request was provided.",
+    "reason": "input guardrail: empty_request"
+  }
+}
