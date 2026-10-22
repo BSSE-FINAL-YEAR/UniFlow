@@ -19,12 +19,6 @@ See docs/Week5_Agent_Task_Contract.md for the goal, state, limits and stop
 conditions this loop is bound by, and docs/Week3_RAG_Architecture.md's
 "Week 5 addition" section for the architecture diagram.
 
-Week 7 wraps the same loop with guardrails that run outside the model
-(src/guardrails.py): input checks, prompt-injection and prohibited-action
-screening, and output checks against the tool results. Every trace now
-also records the prompt, the retrieved chunks, latency and the guardrail
-decision. See docs/Week7_Guardrails.md.
-
 Native provider function-calling is considered, not used: it would add
 separate Gemini functionDeclarations and Groq tools schemas on top of
 the two provider paths already in llm_client.py. The JSON contract is
@@ -46,20 +40,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from guardrails import (  # noqa: E402
-    VALID_STATUSES,
-    groundedness,
-    screen_output,
-    screen_request,
-)
 from llm_client import generate  # noqa: E402
-from rag.retrieve import retrieve  # noqa: E402
 from tools.dispatch import dispatch  # noqa: E402
 from tools.registry import ALLOW_LIST  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 TRACES = ROOT / "evidence" / "traces" / "tools"
 
+VALID_STATUSES = {
+    "tool_call",
+    "ok",
+    "partial",
+    "insufficient_context",
+    "out_of_scope",
+    "refused",
+}
 # Week 5 Agent Task Contract's iteration limit: enough for the genuine
 # two-tool chain (check_course_load -> create_defect_report -> final answer,
 # 3 model turns) plus one spare round for a correction/re-plan, while still
@@ -160,9 +155,6 @@ class SessionState:
     last_validation: dict | None = None
     started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     ended_at: str | None = None
-    prompts: list[dict] = field(default_factory=list)
-    retrieval: list[dict] = field(default_factory=list)
-    guardrails: dict = field(default_factory=dict)
 
     def record_model_turn(self, round_i: int, model_record: dict, validation: dict) -> None:
         self.last_validation = validation
@@ -201,30 +193,7 @@ class SessionState:
             "tool_results": self.tool_results,
             "model_calls": self.model_calls,
             "validation": {k: v for k, v in (self.last_validation or {}).items() if k != "parsed"},
-            "prompts": self.prompts,
-            "retrieval": self.retrieval,
-            "guardrails": self.guardrails,
-            "metrics": self.metrics(),
             "parsed_output": self.final,
-        }
-
-    def metrics(self) -> dict:
-        latency = sum(int(call.get("latency_ms") or 0) for call in self.model_calls)
-        schema = (self.last_validation or {}).get("schema_errors") or []
-        findings = self.guardrails.get("output_findings") or []
-        if not self.model_calls:
-            instruction_following: bool | str = "not_applicable"
-        else:
-            instruction_following = not schema and not findings
-        return {
-            "latency_ms": latency,
-            "model_turns": len(self.model_calls),
-            "tool_calls": len(self.tool_results),
-            "tools_selected": [item.get("tool") for item in self.tool_results],
-            "instruction_following": instruction_following,
-            "safety_violations": list(self.guardrails.get("safety_violations") or []),
-            "grounded": self.guardrails.get("grounded", "not_applicable"),
-            "task_completion": self.final is not None and self.status in VALID_STATUSES - {"tool_call"},
         }
 
 
@@ -271,41 +240,8 @@ def parse_and_validate(raw: str) -> dict:
     return report
 
 
-def _retrieval_records(request: str) -> list[dict]:
-    """Top-k chunks for the trace and the prompt. Retrieval errors are recorded, not raised."""
-    try:
-        hits = retrieve(request, k=4)
-    except Exception as exc:  # retrieval must not take the agent down
-        return [{"error": str(exc)}]
-    records = []
-    for hit in hits:
-        chunk = hit.chunk
-        records.append({
-            "chunk_id": chunk.chunk_id,
-            "doc_id": chunk.doc_id,
-            "title": chunk.title,
-            "provenance": chunk.provenance,
-            "status": chunk.status,
-            "score": round(hit.score, 3),
-            "text": chunk.text,
-        })
-    return records
-
-
-def _user_prompt(request: str, prior_steps: list[dict], retrieval: list[dict]) -> str:
+def _user_prompt(request: str, prior_steps: list[dict]) -> str:
     body = f"## Request\n{request}\n"
-    usable = [row for row in retrieval if "error" not in row]
-    if usable:
-        body += "\n## Retrieved context\n"
-        body += (
-            "Supporting chunks only. A course-load allow or deny still requires "
-            "check_course_load. A chunk with status draft-unapproved is not an approved rule.\n"
-        )
-        for row in usable:
-            body += (
-                f"\n[{row['chunk_id']}] doc_id={row['doc_id']} status={row['status']} "
-                f"score={row['score']}\n{row['text']}\n"
-            )
     if prior_steps:
         body += "\n## Tool results so far\n"
         body += json.dumps(prior_steps, indent=2)
@@ -327,7 +263,6 @@ def handle_request(
     defects_dir: Path | None = None,
     memory_store: Path | None = None,
     max_rounds: int = MAX_TOOL_ROUNDS,
-    traces_dir: Path | None = None,
 ) -> dict:
     """Run the bounded agent loop. scripted_turns replace generate() for offline eval.
 
@@ -341,30 +276,9 @@ def handle_request(
     rather than ever returning no answer at all.
     """
     state = SessionState(request=request, tag=tag)
-    state.retrieval = _retrieval_records(request)
-    screened = screen_request(request)
-    state.guardrails = {
-        "input_reasons": screened["input_reasons"],
-        "injection": screened["injection"],
-        "prohibited": screened["prohibited"],
-        "output_findings": [],
-        "safety_violations": list(screened["safety_violations"]),
-        "blocked_before_model": screened["blocked"],
-        "grounded": "not_applicable",
-    }
-    if screened["blocked"]:
-        state.stop({
-            "status": screened["status"],
-            "tool": "",
-            "arguments": {},
-            "answer": screened["answer"],
-            "reason": "input guardrail: " + ", ".join(screened["safety_violations"]),
-        })
-        return _write_trace(state, traces_dir)
 
     for round_i in range(max_rounds + 1):
-        user = _user_prompt(request, state.tool_results, state.retrieval)
-        state.prompts.append({"round": round_i, "system": SYSTEM, "user": user})
+        user = _user_prompt(request, state.tool_results)
         if scripted_turns is not None:
             if round_i >= len(scripted_turns):
                 validation = {
@@ -397,20 +311,7 @@ def handle_request(
             break  # state.final stays None; the post-loop fallback below stops safely
 
         if parsed.get("status") != "tool_call":
-            findings = screen_output(parsed, state.tool_results, validation["schema_errors"], request)
-            state.guardrails["output_findings"] = findings
-            if findings:
-                state.guardrails["safety_violations"] = list(state.guardrails["safety_violations"]) + findings
-                state.guardrails["blocked_model_output"] = parsed
-                state.stop({
-                    "status": "refused",
-                    "tool": "",
-                    "arguments": {},
-                    "answer": "Stopped by the output guardrail: " + ", ".join(findings) + ".",
-                    "reason": "model output failed validation and was not accepted as the outcome",
-                })
-            else:
-                state.stop(parsed)  # Stop: the model reached a terminal status itself
+            state.stop(parsed)  # Stop: the model reached a terminal status itself
             break
 
         if round_i == max_rounds:
@@ -457,25 +358,14 @@ def handle_request(
             "reason": "no parseable terminal status before the loop ended",
         })
 
-    state.guardrails["grounded"] = groundedness(
-        state.guardrails.get("output_findings") or [],
-        state.tool_results,
-    )
-    return _write_trace(state, traces_dir)
-
-
-def _write_trace(state: SessionState, traces_dir: Path | None) -> dict:
     trace = state.to_trace_dict()
-    folder = traces_dir or TRACES
-    folder.mkdir(parents=True, exist_ok=True)
+
+    TRACES.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
-    slug = re.sub(r"[^a-z0-9]+", "-", state.request.lower())[:40].strip("-") or "empty"
-    path = folder / f"{stamp}_{slug}{('_' + state.tag) if state.tag else ''}.json"
+    slug = re.sub(r"[^a-z0-9]+", "-", request.lower())[:40].strip("-")
+    path = TRACES / f"{stamp}_{slug}{('_' + tag) if tag else ''}.json"
     path.write_text(json.dumps(trace, indent=2), encoding="utf-8")
-    try:
-        trace["_trace_path"] = str(path.relative_to(ROOT))
-    except ValueError:
-        trace["_trace_path"] = str(path)
+    trace["_trace_path"] = str(path.relative_to(ROOT))
     return trace
 
 

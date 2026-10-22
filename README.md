@@ -44,9 +44,7 @@ Those boundaries come from Week 1’s AI Boundary Matrix and `prompts/context/un
 | 3 | RAG: answer only from retrieved chunks, with `doc_id` citations | `src/rag/`, `src/rag_baseline.py`, `knowledge/` |
 | 4 | Tools: `check_course_load` and `create_defect_report`, allow-list, human approval | `src/tools/`, `src/tool_baseline.py`, `docs/Week4_Tool_Catalogue.md` |
 | 5 | Bounded agent: same two tools, explicit Sense→Plan→Act→Observe→Stop loop, max-iteration stop condition, re-planning on a task that needs it | `src/tool_baseline.py`, `docs/Week5_Agent_Task_Contract.md`, `docs/Week3_RAG_Architecture.md` ("Week 5 addition") |
-| 6 | Explicit session state, case-history memory, MCP-style interface note | `src/memory/`, `docs/Week6_State_Model.md`, `docs/Week6_Memory_Design.md`, `docs/Week6_MCP_Interface.md` |
-| 7 | 34-scenario evaluation, trace metrics, input/output guardrails | `src/guardrails.py`, `eval/final_eval_cases.json`, `docs/Week7_Failures.md` |
-| 8 | Final release | Not built yet |
+| 6–8 | Memory/state, interoperability, evaluation/guardrails, final release | Not built yet |
 
 ---
 
@@ -118,15 +116,6 @@ python src/tool_baseline.py --request "A Year 2 student wants to register for 6 
 
 The first request needs **two** tools in sequence (`check_course_load` then `create_defect_report`); the second needs only one — the agent must observe the first tool's result before deciding whether the second call is warranted at all. See `docs/Week5_Agent_Task_Contract.md` for the goal, limits and stop conditions, and `docs/Week3_RAG_Architecture.md`'s "Week 5 addition" for the Sense→Plan→Act→Observe→Stop diagram.
 
-**Week 7 — evaluation and guardrails (no API key)**
-
-```text
-python src/final_eval_runner.py
-python -m pytest tests/ -q
-```
-
-The runner executes all 34 scenarios with scripted model turns, so the result is a property of the guardrails and the tools. It writes `eval/final_results_v1.0.csv` and one trace per case under `evidence/traces/week7/`. A live model call still needs a key in `.env`; both keys were empty when this suite was run, and the results do not claim one.
-
 **Human-only defect review (not a tool)**
 
 ```text
@@ -155,8 +144,7 @@ src/rag/              ingest → chunk → BM25 → retrieve
 src/rag_baseline.py   Week 3 grounded QA
 src/uniflow_core/     deterministic rules (R-01–R-07) as pure functions
 src/tools/            Week 4 allow-list, schemas, dispatch
-src/tool_baseline.py  Week 4–7 agent loop, guardrails and traces
-src/guardrails.py     Week 7 input, injection and output checks
+src/tool_baseline.py  Week 4 tool-calling loop
 scripts/              human-only steps (not callable by the model)
 eval/                 evaluation cases and result CSVs
 tests/                offline unit tests
@@ -188,8 +176,6 @@ Tool contracts: `docs/Week4_Tool_Catalogue.md`
 | 3 | `UniFlow_Week3_Progress_Report.docx` | `eval/rag_results_v1.0.csv`, `evidence/traces/rag/` |
 | 4 | `UniFlow_Week4_Progress_Report.docx` | `eval/tool_results_v1.0.csv`, `evidence/traces/tools/` |
 | 5 | `UniFlow_Week5_Progress_Report.docx` | `docs/Week5_Agent_Task_Contract.md`, `evidence/traces/tools/` (3 new live traces) |
-| 6 | `UniFlow_Week6_Progress_Report.docx` | `docs/Week6_*.md`, `data/memory/case_history.json` |
-| 7 | `UniFlow_Week7_Progress_Report.docx` | `eval/final_results_v1.0.csv`, `evidence/traces/week7/`, `docs/Week7_Failures.md` |
 
 Task board: [ClickUp — UniFlow](https://app.clickup.com/1200410000004069/v/li/1200410000007523)
 
