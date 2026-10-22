@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-10-17T08:17:33.318232+00:00",
+  "request": "A Year 2 student wants to register 5 units. Is that allowed?",
+  "tag": "FE-03",
+  "state": {
+    "status": "partial",
+    "started_at": "2026-10-17T08:17:31.000348+00:00",
+    "ended_at": "2026-10-17T08:17:33.318212+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": null,
+      "schema_errors": [
+        "empty response"
+      ]
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "text": "",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 2317,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "attempts": 3,
+      "error": "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": false,
+    "json_parsed_after_repair": false,
+    "schema_errors": [
+      "empty response"
+    ]
+  },
+  "parsed_output": {
+    "status": "partial",
+    "tool": "",
+    "arguments": {},
+    "answer": "Stopped: the model did not produce a usable response.",
+    "reason": "no parseable terminal status before the loop ended"
+  },
+  "observability": {
+    "run_id": "agent-20261017T081731-05e7d8",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "gemini",
+    "model": "gemini-3.6-flash",
+    "scripted": false,
+    "model_turns": 1,
+    "model_latency_ms": 2317,
+    "dispatch_latency_ms": null,
+    "total_latency_ms": 2317,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "model_errors": [
+      "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+    ],
+    "schema_errors": [
+      "empty response"
+    ],
+    "tools_called": [],
+    "tool_errors": [],
+    "outcome_status": "partial"
+  }
+}

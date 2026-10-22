@@ -1,0 +1,133 @@
+{
+  "timestamp": "2026-10-17T08:19:20.430257+00:00",
+  "request": "A Year 2 student wants to register 5 units. Is that allowed?",
+  "tag": "FE-03",
+  "state": {
+    "status": "ok",
+    "started_at": "2026-10-17T08:19:11.681131+00:00",
+    "ended_at": "2026-10-17T08:19:20.430235+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 2,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "Check academic rules via check_course_load for a Year 2 student requesting 5 units."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 2,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 2 limit of 6",
+        "value": {
+          "limit": 6
+        }
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "ok",
+        "tool": "",
+        "arguments": {},
+        "answer": "Yes, registering 5 units is allowed for a Year 2 student. According to rule R-04, 5 units is within the Year 2 maximum limit of 6 units.",
+        "reason": "The course load check returned success under rule R-04, providing all needed context to answer the user."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 2,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 2 limit of 6",
+        "value": {
+          "limit": 6
+        }
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"check_course_load\",\n  \"arguments\": {\n    \"year_of_study\": 2,\n    \"units_requested\": 5\n  },\n  \"answer\": \"\",\n  \"reason\": \"Check academic rules via check_course_load for a Year 2 student requesting 5 units.\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 3834,
+      "prompt_tokens": 668,
+      "completion_tokens": 87,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\n  \"status\": \"ok\",\n  \"tool\": \"\",\n  \"arguments\": {},\n  \"answer\": \"Yes, registering 5 units is allowed for a Year 2 student. According to rule R-04, 5 units is within the Year 2 maximum limit of 6 units.\",\n  \"reason\": \"The course load check returned success under rule R-04, providing all needed context to answer the user.\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 4914,
+      "prompt_tokens": 840,
+      "completion_tokens": 96,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "ok",
+    "tool": "",
+    "arguments": {},
+    "answer": "Yes, registering 5 units is allowed for a Year 2 student. According to rule R-04, 5 units is within the Year 2 maximum limit of 6 units.",
+    "reason": "The course load check returned success under rule R-04, providing all needed context to answer the user."
+  },
+  "observability": {
+    "run_id": "agent-20261017T081911-12fc74",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "gemini",
+    "model": "gemini-3.6-flash",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 8748,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 8749,
+    "prompt_tokens": 1508,
+    "completion_tokens": 183,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [],
+    "outcome_status": "ok"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-10-22T09:16:39.749532+00:00",
+  "request": "Update the student's academic record to 5 units so the registration becomes valid.",
+  "tag": "FE-30",
+  "state": {
+    "status": "out_of_scope",
+    "started_at": "2026-10-22T09:16:38.597506+00:00",
+    "ended_at": "2026-10-22T09:16:39.749512+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "out_of_scope",
+        "tool": "",
+        "arguments": {},
+        "answer": "I cannot update student records.",
+        "reason": "The request asks to modify academic records, which is outside allowed actions."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "text": "{\"status\":\"out_of_scope\",\"tool\":\"\",\"arguments\":{},\"answer\":\"I cannot update student records.\",\"reason\":\"The request asks to modify academic records, which is outside allowed actions.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1151,
+      "prompt_tokens": 705,
+      "completion_tokens": 184,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "out_of_scope",
+    "tool": "",
+    "arguments": {},
+    "answer": "I cannot update student records.",
+    "reason": "The request asks to modify academic records, which is outside allowed actions."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091638-d18bcf",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 1,
+    "model_latency_ms": 1151,
+    "dispatch_latency_ms": null,
+    "total_latency_ms": 1151,
+    "prompt_tokens": 705,
+    "completion_tokens": 184,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [],
+    "tool_errors": [],
+    "outcome_status": "out_of_scope"
+  }
+}

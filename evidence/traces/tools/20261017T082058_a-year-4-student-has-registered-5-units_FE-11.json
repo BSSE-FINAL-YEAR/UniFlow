@@ -1,0 +1,200 @@
+{
+  "timestamp": "2026-10-17T08:20:58.938934+00:00",
+  "request": "A Year 4 student has registered 5 units. Check the load rule and draft a defect report if it is a violation.",
+  "tag": "FE-11",
+  "state": {
+    "status": "partial",
+    "started_at": "2026-10-17T08:20:40.809581+00:00",
+    "ended_at": "2026-10-17T08:20:58.938917+00:00",
+    "rounds_used": 2
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 4,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "Check course load rules for a Year 4 student registering 5 units."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 4,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 5 exceeds Year 4 maximum of 4",
+        "value": null
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "create_defect_report",
+        "arguments": {
+          "story_id": "US-04",
+          "rule_id": "R-04",
+          "title": "Course load exceeds maximum limit for Year 4",
+          "description": "A Year 4 student attempted to register 5 units, exceeding the maximum allowed limit of 4 units specified in rule R-04.",
+          "severity": "medium"
+        },
+        "answer": "",
+        "reason": "Drafting a defect report for rule R-04 course load violation following the failed load check."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 1,
+      "kind": "dispatch",
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-04",
+        "rule_id": "R-04",
+        "title": "Course load exceeds maximum limit for Year 4",
+        "description": "A Year 4 student attempted to register 5 units, exceeding the maximum allowed limit of 4 units specified in rule R-04.",
+        "severity": "medium"
+      },
+      "result": {
+        "defect_id": "DEF-20261017T082033",
+        "status": "pending_review",
+        "path": "evidence/defects/DEF-20261017T082033.json",
+        "created_at": "2026-10-17T08:20:49Z",
+        "duplicate_of": "DEF-20261017T082033",
+        "note": "A defect for R-04/US-04 was already on file (first seen 2026-10-17T08:20:33Z, seen 2 time(s) total). No new report was written."
+      },
+      "latency_ms": 14
+    },
+    {
+      "round": 2,
+      "kind": "model",
+      "parsed": null,
+      "schema_errors": [
+        "empty response"
+      ]
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 4,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 5 exceeds Year 4 maximum of 4",
+        "value": null
+      }
+    },
+    {
+      "tool": "create_defect_report",
+      "arguments": {
+        "story_id": "US-04",
+        "rule_id": "R-04",
+        "title": "Course load exceeds maximum limit for Year 4",
+        "description": "A Year 4 student attempted to register 5 units, exceeding the maximum allowed limit of 4 units specified in rule R-04.",
+        "severity": "medium"
+      },
+      "result": {
+        "defect_id": "DEF-20261017T082033",
+        "status": "pending_review",
+        "path": "evidence/defects/DEF-20261017T082033.json",
+        "created_at": "2026-10-17T08:20:49Z",
+        "duplicate_of": "DEF-20261017T082033",
+        "note": "A defect for R-04/US-04 was already on file (first seen 2026-10-17T08:20:33Z, seen 2 time(s) total). No new report was written."
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\"status\": \"tool_call\", \"tool\": \"check_course_load\", \"arguments\": {\"year_of_study\": 4, \"units_requested\": 5}, \"answer\": \"\", \"reason\": \"Check course load rules for a Year 4 student registering 5 units.\"}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 3109,
+      "prompt_tokens": 678,
+      "completion_tokens": 63,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"create_defect_report\",\n  \"arguments\": {\n    \"story_id\": \"US-04\",\n    \"rule_id\": \"R-04\",\n    \"title\": \"Course load exceeds maximum limit for Year 4\",\n    \"description\": \"A Year 4 student attempted to register 5 units, exceeding the maximum allowed limit of 4 units specified in rule R-04.\",\n    \"severity\": \"medium\"\n  },\n  \"answer\": \"\",\n  \"reason\": \"Drafting a defect report for rule R-04 course load violation following the failed load check.\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 5796,
+      "prompt_tokens": 840,
+      "completion_tokens": 151,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 9208,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "attempts": 3,
+      "error": "rate limited: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": false,
+    "json_parsed_after_repair": false,
+    "schema_errors": [
+      "empty response"
+    ]
+  },
+  "parsed_output": {
+    "status": "partial",
+    "tool": "",
+    "arguments": {},
+    "answer": "Stopped: the model did not produce a usable response.",
+    "reason": "no parseable terminal status before the loop ended"
+  },
+  "observability": {
+    "run_id": "agent-20261017T082040-6dc779",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "gemini",
+    "model": "gemini-3.6-flash",
+    "scripted": false,
+    "model_turns": 3,
+    "model_latency_ms": 18113,
+    "dispatch_latency_ms": 14,
+    "total_latency_ms": 18129,
+    "prompt_tokens": 1518,
+    "completion_tokens": 214,
+    "model_errors": [
+      "rate limited: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
+    ],
+    "schema_errors": [
+      "empty response"
+    ],
+    "tools_called": [
+      "check_course_load",
+      "create_defect_report"
+    ],
+    "tool_errors": [],
+    "outcome_status": "partial"
+  }
+}

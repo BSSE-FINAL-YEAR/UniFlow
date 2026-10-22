@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-10-17T08:19:28.519782+00:00",
+  "request": "A Year 3 student has registered 6 units. Check the load rule and draft a defect report if it is a violation.",
+  "tag": "FE-04",
+  "state": {
+    "status": "partial",
+    "started_at": "2026-10-17T08:19:23.434207+00:00",
+    "ended_at": "2026-10-17T08:19:28.519737+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 6
+        },
+        "answer": "",
+        "reason": "Check course load rule R-04 for a Year 3 student requesting 6 units before deciding if a defect report draft is needed."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 6
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 6 exceeds Year 3 maximum of 5",
+        "value": null
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": null,
+      "schema_errors": [
+        "empty response"
+      ]
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 6
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 6 exceeds Year 3 maximum of 5",
+        "value": null
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"check_course_load\",\n  \"arguments\": {\n    \"year_of_study\": 3,\n    \"units_requested\": 6\n  },\n  \"answer\": \"\",\n  \"reason\": \"Check course load rule R-04 for a Year 3 student requesting 6 units before deciding if a defect report draft is needed.\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 2936,
+      "prompt_tokens": 678,
+      "completion_tokens": 95,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 2148,
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "attempts": 3,
+      "error": "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": false,
+    "json_parsed_after_repair": false,
+    "schema_errors": [
+      "empty response"
+    ]
+  },
+  "parsed_output": {
+    "status": "partial",
+    "tool": "",
+    "arguments": {},
+    "answer": "Stopped: the model did not produce a usable response.",
+    "reason": "no parseable terminal status before the loop ended"
+  },
+  "observability": {
+    "run_id": "agent-20261017T081923-806064",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "gemini",
+    "model": "gemini-3.6-flash",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 5084,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 5085,
+    "prompt_tokens": 678,
+    "completion_tokens": 95,
+    "model_errors": [
+      "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+    ],
+    "schema_errors": [
+      "empty response"
+    ],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [],
+    "outcome_status": "partial"
+  }
+}

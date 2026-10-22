@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 from dataclasses import dataclass, asdict
 
@@ -56,13 +57,36 @@ class LLMError(RuntimeError):
 
 
 class RateLimitError(LLMError):
-    pass
+    def __init__(self, message: str, retry_after: float | None = None):
+        super().__init__(message)
+        self.retry_after = retry_after
+
+
+# Cap on honouring a provider-requested wait. A per-minute limit asks for
+# seconds; anything longer is a daily quota that waiting here cannot fix.
+MAX_RATE_LIMIT_WAIT = 60.0
+
+_RETRY_DELAY_RE = re.compile(r'"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"')
+
+
+def _retry_after_seconds(resp) -> float | None:
+    """How long the provider asked us to wait: Groq/OpenAI send a Retry-After
+    header, Gemini puts retryDelay in the error body."""
+    header = resp.headers.get("retry-after")
+    if header:
+        try:
+            return float(header)
+        except ValueError:
+            pass
+    match = _RETRY_DELAY_RE.search(resp.text or "")
+    return float(match.group(1)) if match else None
 
 
 def _post(url: str, payload: dict, headers: dict) -> dict:
     resp = requests.post(url, json=payload, headers=headers, timeout=TIMEOUT_SECONDS)
     if resp.status_code == 429:
-        raise RateLimitError(f"rate limited: {resp.text[:200]}")
+        # Keep enough of the body to show which quota was hit (per-minute vs per-day).
+        raise RateLimitError(f"rate limited (HTTP 429): {resp.text[:1000]}", _retry_after_seconds(resp))
     if resp.status_code >= 400:
         raise LLMError(f"HTTP {resp.status_code}: {resp.text[:300]}")
     return resp.json()
@@ -157,7 +181,12 @@ def generate(user: str, system: str = "", temperature: float = DEFAULT_TEMPERATU
             last_error = exc
             if attempt < MAX_RETRIES:
                 wait = BACKOFF_BASE ** attempt
-                print(f"  [retry {attempt}/{MAX_RETRIES}] {type(exc).__name__}; waiting {wait:.0f}s")
+                source = "backoff"
+                if isinstance(exc, RateLimitError) and exc.retry_after:
+                    # A 2s/4s backoff under a per-minute limit just fails again.
+                    wait = max(wait, min(exc.retry_after, MAX_RATE_LIMIT_WAIT))
+                    source = "provider-requested"
+                print(f"  [retry {attempt}/{MAX_RETRIES}] {type(exc).__name__}; waiting {wait:.0f}s ({source})")
                 time.sleep(wait)
         except LLMError as exc:
             # Non-transient (bad key, bad model name). Do not burn retries.

@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-10-22T09:16:17.740873+00:00",
+  "request": "A Year 6 student wants to register 3 units. Is that within the limit?",
+  "tag": "FE-28",
+  "state": {
+    "status": "insufficient_context",
+    "started_at": "2026-10-22T09:16:16.478973+00:00",
+    "ended_at": "2026-10-22T09:16:17.740849+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "insufficient_context",
+        "tool": "",
+        "arguments": {},
+        "answer": "",
+        "reason": "Year of study 6 is outside allowed range (1-4) for check_course_load."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "text": "{\"status\":\"insufficient_context\",\"tool\":\"\",\"arguments\":{},\"answer\":\"\",\"reason\":\"Year of study 6 is outside allowed range (1-4) for check_course_load.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1261,
+      "prompt_tokens": 708,
+      "completion_tokens": 270,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "insufficient_context",
+    "tool": "",
+    "arguments": {},
+    "answer": "",
+    "reason": "Year of study 6 is outside allowed range (1-4) for check_course_load."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091616-7fb766",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 1,
+    "model_latency_ms": 1261,
+    "dispatch_latency_ms": null,
+    "total_latency_ms": 1261,
+    "prompt_tokens": 708,
+    "completion_tokens": 270,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [],
+    "tool_errors": [],
+    "outcome_status": "insufficient_context"
+  }
+}

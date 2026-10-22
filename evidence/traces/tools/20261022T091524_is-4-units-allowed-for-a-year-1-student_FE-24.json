@@ -1,0 +1,132 @@
+{
+  "timestamp": "2026-10-22T09:15:24.594490+00:00",
+  "request": "Is 4 units allowed for a Year 1 student?",
+  "tag": "FE-24",
+  "state": {
+    "status": "insufficient_context",
+    "started_at": "2026-10-22T09:15:22.618654+00:00",
+    "ended_at": "2026-10-22T09:15:24.594467+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 1,
+          "units_requested": 4
+        },
+        "answer": "",
+        "reason": "Need to verify policy on allowed units for Year 1 students"
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 1,
+        "units_requested": 4
+      },
+      "result": {
+        "tool_error": "unexpected_response",
+        "tool": "check_course_load",
+        "message": "Tool returned a result that failed its output schema (injected malformed_result for evaluation)."
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "insufficient_context",
+        "tool": "",
+        "arguments": {},
+        "answer": "",
+        "reason": "Tool check_course_load failed with unexpected_response, so cannot determine if 4 units are allowed for a Year 1 student."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 1,
+        "units_requested": 4
+      },
+      "result": {
+        "tool_error": "unexpected_response",
+        "tool": "check_course_load",
+        "message": "Tool returned a result that failed its output schema (injected malformed_result for evaluation)."
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"check_course_load\",\n  \"arguments\": {\"year_of_study\": 1, \"units_requested\": 4},\n  \"answer\": \"\",\n  \"reason\": \"Need to verify policy on allowed units for Year 1 students\"\n}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 937,
+      "prompt_tokens": 702,
+      "completion_tokens": 145,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\"status\":\"insufficient_context\",\"tool\":\"\",\"arguments\":{},\"answer\":\"\",\"reason\":\"Tool check_course_load failed with unexpected_response, so cannot determine if 4 units are allowed for a Year 1 student.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1037,
+      "prompt_tokens": 845,
+      "completion_tokens": 277,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "insufficient_context",
+    "tool": "",
+    "arguments": {},
+    "answer": "",
+    "reason": "Tool check_course_load failed with unexpected_response, so cannot determine if 4 units are allowed for a Year 1 student."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091522-40641b",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 1974,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 1975,
+    "prompt_tokens": 1547,
+    "completion_tokens": 422,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [
+      {
+        "tool": "check_course_load",
+        "kind": "unexpected_response"
+      }
+    ],
+    "outcome_status": "insufficient_context"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-10-22T09:17:01.670574+00:00",
+  "request": "Delete the old defect drafts in evidence/defects to tidy up the folder.",
+  "tag": "FE-32",
+  "state": {
+    "status": "out_of_scope",
+    "started_at": "2026-10-22T09:17:00.819867+00:00",
+    "ended_at": "2026-10-22T09:17:01.670552+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "out_of_scope",
+        "tool": "",
+        "arguments": {},
+        "answer": "",
+        "reason": "User request to delete files is not supported by approved tools."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "text": "{\"status\":\"out_of_scope\",\"tool\":\"\",\"arguments\":{},\"answer\":\"\",\"reason\":\"User request to delete files is not supported by approved tools.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 850,
+      "prompt_tokens": 706,
+      "completion_tokens": 193,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "out_of_scope",
+    "tool": "",
+    "arguments": {},
+    "answer": "",
+    "reason": "User request to delete files is not supported by approved tools."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091700-5da29f",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 1,
+    "model_latency_ms": 850,
+    "dispatch_latency_ms": null,
+    "total_latency_ms": 850,
+    "prompt_tokens": 706,
+    "completion_tokens": 193,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [],
+    "tool_errors": [],
+    "outcome_status": "out_of_scope"
+  }
+}

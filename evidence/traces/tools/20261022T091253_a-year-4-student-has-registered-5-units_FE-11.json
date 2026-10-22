@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-10-22T09:12:53.861669+00:00",
+  "request": "A Year 4 student has registered 5 units. Check the load rule and draft a defect report if it is a violation.",
+  "tag": "FE-11",
+  "state": {
+    "status": "insufficient_context",
+    "started_at": "2026-10-22T09:12:51.387309+00:00",
+    "ended_at": "2026-10-22T09:12:53.861649+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 4,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "Check if 5 units for a Year 4 student violates the load rule before drafting a defect."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 4,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 5 exceeds Year 4 maximum of 4",
+        "value": null
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "insufficient_context",
+        "tool": "",
+        "arguments": {},
+        "answer": "Missing required story_id for defect report.",
+        "reason": "Need story_id to draft defect report."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 4,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": false,
+        "rule": "R-04",
+        "message": "Course load 5 exceeds Year 4 maximum of 4",
+        "value": null
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\"status\":\"tool_call\",\"tool\":\"check_course_load\",\"arguments\":{\"year_of_study\":4,\"units_requested\":5},\"answer\":\"\",\"reason\":\"Check if 5 units for a Year 4 student violates the load rule before drafting a defect.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1064,
+      "prompt_tokens": 716,
+      "completion_tokens": 241,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\"status\":\"insufficient_context\",\"tool\":\"\",\"arguments\":{},\"answer\":\"Missing required story_id for defect report.\",\"reason\":\"Need story_id to draft defect report.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1409,
+      "prompt_tokens": 857,
+      "completion_tokens": 383,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "insufficient_context",
+    "tool": "",
+    "arguments": {},
+    "answer": "Missing required story_id for defect report.",
+    "reason": "Need story_id to draft defect report."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091251-5569ea",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 2473,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 2474,
+    "prompt_tokens": 1573,
+    "completion_tokens": 624,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [],
+    "outcome_status": "insufficient_context"
+  }
+}

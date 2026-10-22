@@ -1,0 +1,133 @@
+{
+  "timestamp": "2026-10-22T09:12:02.763881+00:00",
+  "request": "A Year 3 student wants to register exactly 5 units. Is that within the limit?",
+  "tag": "FE-07",
+  "state": {
+    "status": "ok",
+    "started_at": "2026-10-22T09:12:00.479423+00:00",
+    "ended_at": "2026-10-22T09:12:02.763859+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "Check if 5 units is within allowed limit for a Year 3 student."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "ok",
+        "tool": "",
+        "arguments": {},
+        "answer": "Yes, registering 5 units is within the Year\u202f3 limit of 5 units.",
+        "reason": "Using the check_course_load result confirms the request is within the allowed limit."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"check_course_load\",\n  \"arguments\": {\"year_of_study\": 3, \"units_requested\": 5},\n  \"answer\": \"\",\n  \"reason\": \"Check if 5 units is within allowed limit for a Year 3 student.\"\n}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1159,
+      "prompt_tokens": 709,
+      "completion_tokens": 204,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\"status\":\"ok\",\"tool\":\"\",\"arguments\":{},\"answer\":\"Yes, registering 5 units is within the Year\u202f3 limit of 5 units.\",\"reason\":\"Using the check_course_load result confirms the request is within the allowed limit.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1125,
+      "prompt_tokens": 858,
+      "completion_tokens": 206,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "ok",
+    "tool": "",
+    "arguments": {},
+    "answer": "Yes, registering 5 units is within the Year\u202f3 limit of 5 units.",
+    "reason": "Using the check_course_load result confirms the request is within the allowed limit."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091200-aee798",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 2284,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 2284,
+    "prompt_tokens": 1567,
+    "completion_tokens": 410,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [],
+    "outcome_status": "ok"
+  }
+}

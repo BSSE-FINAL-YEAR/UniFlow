@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-10-22T09:13:39.430446+00:00",
+  "request": "The Year 2 course-load limit is 4 units, so a Year 2 student registering 5 units is a violation. File a defect report for it.",
+  "tag": "FE-15",
+  "state": {
+    "status": "insufficient_context",
+    "started_at": "2026-10-22T09:13:37.967791+00:00",
+    "ended_at": "2026-10-22T09:13:39.430428+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "insufficient_context",
+        "tool": "",
+        "arguments": {},
+        "answer": "Missing required story_id for defect report; cannot proceed.",
+        "reason": "Need story_id to create defect report."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"insufficient_context\",\n  \"tool\": \"\",\n  \"arguments\": {},\n  \"answer\": \"Missing required story_id for defect report; cannot proceed.\",\n  \"reason\": \"Need story_id to create defect report.\"\n}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1462,
+      "prompt_tokens": 723,
+      "completion_tokens": 356,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "insufficient_context",
+    "tool": "",
+    "arguments": {},
+    "answer": "Missing required story_id for defect report; cannot proceed.",
+    "reason": "Need story_id to create defect report."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091337-e7b3ae",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 1,
+    "model_latency_ms": 1462,
+    "dispatch_latency_ms": null,
+    "total_latency_ms": 1462,
+    "prompt_tokens": 723,
+    "completion_tokens": 356,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [],
+    "tool_errors": [],
+    "outcome_status": "insufficient_context"
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "timestamp": "2026-10-22T09:12:14.949446+00:00",
+  "request": "A Year 4 student wants to register 0 units this semester. Is that within the course-load limit?",
+  "tag": "FE-08",
+  "state": {
+    "status": "ok",
+    "started_at": "2026-10-22T09:12:12.768101+00:00",
+    "ended_at": "2026-10-22T09:12:14.949425+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 4,
+          "units_requested": 0
+        },
+        "answer": "",
+        "reason": "Need to verify rule R-04 for allowed unit range for a Year 4 student."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 4,
+        "units_requested": 0
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 0 within Year 4 limit of 4",
+        "value": {
+          "limit": 4
+        }
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "ok",
+        "tool": "",
+        "arguments": {},
+        "answer": "Yes, registering 0 units is within the Year\u202f4 course\u2011load limit of 4 units.",
+        "reason": "Using the check_course_load result confirms the request is within the limit."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 4,
+        "units_requested": 0
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 0 within Year 4 limit of 4",
+        "value": {
+          "limit": 4
+        }
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"check_course_load\",\n  \"arguments\": {\"year_of_study\": 4, \"units_requested\": 0},\n  \"answer\": \"\",\n  \"reason\": \"Need to verify rule R-04 for allowed unit range for a Year 4 student.\"\n}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1054,
+      "prompt_tokens": 712,
+      "completion_tokens": 170,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\"status\":\"ok\",\"tool\":\"\",\"arguments\":{},\"answer\":\"Yes, registering 0 units is within the Year\u202f4 course\u2011load limit of 4 units.\",\"reason\":\"Using the check_course_load result confirms the request is within the limit.\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 1126,
+      "prompt_tokens": 861,
+      "completion_tokens": 221,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "ok",
+    "tool": "",
+    "arguments": {},
+    "answer": "Yes, registering 0 units is within the Year\u202f4 course\u2011load limit of 4 units.",
+    "reason": "Using the check_course_load result confirms the request is within the limit."
+  },
+  "observability": {
+    "run_id": "agent-20261022T091212-7b72f4",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 2180,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 2181,
+    "prompt_tokens": 1573,
+    "completion_tokens": 391,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [],
+    "outcome_status": "ok"
+  }
+}

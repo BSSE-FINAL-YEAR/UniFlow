@@ -35,12 +35,14 @@ import argparse
 import json
 import re
 import sys
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from llm_client import generate  # noqa: E402
+from observability import elapsed_ms, log_run, new_run_id, prompt_fingerprint  # noqa: E402
 from tools.dispatch import dispatch  # noqa: E402
 from tools.registry import ALLOW_LIST  # noqa: E402
 
@@ -124,6 +126,12 @@ re-plan after observing each tool result rather than calling both blindly.
 Never guess a missing tool argument. Never call a tool that is not listed.
 """
 
+# prompts/tool_caller_v1.0.md was last updated in Week 4, but Week 5 changed
+# the running prompt above. The fingerprint identifies the prompt that really
+# ran, independent of whether the spec file is kept in sync.
+PROMPT_ID = "tool_caller"
+PROMPT_SHA = prompt_fingerprint(SYSTEM, OUTPUT_CONTRACT)
+
 
 @dataclass
 class SessionState:
@@ -155,6 +163,9 @@ class SessionState:
     last_validation: dict | None = None
     started_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     ended_at: str | None = None
+    run_id: str = field(default_factory=lambda: new_run_id("agent"))
+    total_latency_ms: int | None = None
+    _t0: float = field(default_factory=time.perf_counter, repr=False, compare=False)
 
     def record_model_turn(self, round_i: int, model_record: dict, validation: dict) -> None:
         self.last_validation = validation
@@ -166,10 +177,19 @@ class SessionState:
             "schema_errors": list(validation["schema_errors"]),
         })
 
-    def record_dispatch(self, round_i: int, tool: str | None, arguments: dict | None, result: dict) -> None:
+    def record_dispatch(
+        self,
+        round_i: int,
+        tool: str | None,
+        arguments: dict | None,
+        result: dict,
+        latency_ms: int | None = None,
+    ) -> None:
         record = {"tool": tool, "arguments": arguments, "result": result}
+        # tool_results is fed back into the next prompt, so timing stays out
+        # of it and is recorded on the step only.
         self.tool_results.append(record)
-        self.steps.append({"round": round_i, "kind": "dispatch", **record})
+        self.steps.append({"round": round_i, "kind": "dispatch", **record, "latency_ms": latency_ms})
 
     def stop(self, final: dict) -> None:
         """Reach a terminal status. Idempotent-safe: only the first call sets ended_at."""
@@ -177,6 +197,42 @@ class SessionState:
         self.status = final.get("status", "partial")
         if self.ended_at is None:
             self.ended_at = datetime.now(timezone.utc).isoformat()
+            self.total_latency_ms = elapsed_ms(self._t0)
+
+    def observability(self) -> dict:
+        """Week 7: per-run totals a reviewer needs without re-reading every step."""
+        live_calls = [m for m in self.model_calls if not m.get("scripted")]
+        first_live = live_calls[0] if live_calls else {}
+
+        def _sum(key: str, items: list[dict]) -> int | None:
+            values = [i.get(key) for i in items if isinstance(i.get(key), int)]
+            return sum(values) if values else None
+
+        dispatch_steps = [s for s in self.steps if s["kind"] == "dispatch"]
+        return {
+            "run_id": self.run_id,
+            "pipeline": "agent",
+            "prompt_id": PROMPT_ID,
+            "prompt_sha": PROMPT_SHA,
+            "provider": first_live.get("provider", "scripted" if self.model_calls else None),
+            "model": first_live.get("model"),
+            "scripted": any(m.get("scripted") for m in self.model_calls),
+            "model_turns": len(self.model_calls),
+            "model_latency_ms": _sum("latency_ms", self.model_calls),
+            "dispatch_latency_ms": _sum("latency_ms", dispatch_steps),
+            "total_latency_ms": self.total_latency_ms,
+            "prompt_tokens": _sum("prompt_tokens", self.model_calls),
+            "completion_tokens": _sum("completion_tokens", self.model_calls),
+            "model_errors": [m["error"] for m in self.model_calls if m.get("error")],
+            "schema_errors": [e for s in self.steps if s["kind"] == "model" for e in s["schema_errors"]],
+            "tools_called": [r["tool"] for r in self.tool_results],
+            "tool_errors": [
+                {"tool": r["tool"], "kind": r["result"]["tool_error"]}
+                for r in self.tool_results
+                if isinstance(r["result"], dict) and "tool_error" in r["result"]
+            ],
+            "outcome_status": self.status,
+        }
 
     def to_trace_dict(self) -> dict:
         return {
@@ -194,6 +250,7 @@ class SessionState:
             "model_calls": self.model_calls,
             "validation": {k: v for k, v in (self.last_validation or {}).items() if k != "parsed"},
             "parsed_output": self.final,
+            "observability": self.observability(),
         }
 
 
@@ -333,6 +390,7 @@ def handle_request(
             break
 
         # Act: allow-list + schema live in dispatch, even if parse flagged the name.
+        dispatch_started = time.perf_counter()
         result = dispatch(
             str(parsed.get("tool") or ""),
             parsed.get("arguments") if isinstance(parsed.get("arguments"), dict) else {},
@@ -343,7 +401,10 @@ def handle_request(
         # Observe: this result becomes part of next round's Sense input via
         # state.tool_results -> _user_prompt(). Re-plan happens on the next
         # loop turn.
-        state.record_dispatch(round_i, parsed.get("tool"), parsed.get("arguments"), result)
+        state.record_dispatch(
+            round_i, parsed.get("tool"), parsed.get("arguments"), result,
+            latency_ms=elapsed_ms(dispatch_started),
+        )
 
     if state.final is None:
         # The loop ended without any terminal status (e.g. an unparseable
@@ -366,6 +427,15 @@ def handle_request(
     path = TRACES / f"{stamp}_{slug}{('_' + tag) if tag else ''}.json"
     path.write_text(json.dumps(trace, indent=2), encoding="utf-8")
     trace["_trace_path"] = str(path.relative_to(ROOT))
+
+    log_run({
+        "timestamp": trace["timestamp"],
+        "tag": tag,
+        "input": request[:200],
+        "inject": inject,
+        **trace["observability"],
+        "trace": trace["_trace_path"],
+    })
     return trace
 
 

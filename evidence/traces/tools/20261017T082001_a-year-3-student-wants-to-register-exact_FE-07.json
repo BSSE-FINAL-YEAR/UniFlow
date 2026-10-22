@@ -1,0 +1,133 @@
+{
+  "timestamp": "2026-10-17T08:20:01.562011+00:00",
+  "request": "A Year 3 student wants to register exactly 5 units. Is that within the limit?",
+  "tag": "FE-07",
+  "state": {
+    "status": "ok",
+    "started_at": "2026-10-17T08:19:46.372996+00:00",
+    "ended_at": "2026-10-17T08:20:01.561995+00:00",
+    "rounds_used": 1
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "tool_call",
+        "tool": "check_course_load",
+        "arguments": {
+          "year_of_study": 3,
+          "units_requested": 5
+        },
+        "answer": "",
+        "reason": "Check if 5 units for a Year 3 student complies with course load rule R-04 using check_course_load."
+      },
+      "schema_errors": []
+    },
+    {
+      "round": 0,
+      "kind": "dispatch",
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      },
+      "latency_ms": 0
+    },
+    {
+      "round": 1,
+      "kind": "model",
+      "parsed": {
+        "status": "ok",
+        "tool": "",
+        "arguments": {},
+        "answer": "Yes, registering 5 units is within the limit for a Year 3 student. According to rule R-04, the maximum allowed course load for Year 3 is 5 units.",
+        "reason": "The course load check returned a valid result confirming 5 units is within the Year 3 limit, so no further tool calls are required."
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [
+    {
+      "tool": "check_course_load",
+      "arguments": {
+        "year_of_study": 3,
+        "units_requested": 5
+      },
+      "result": {
+        "ok": true,
+        "rule": "R-04",
+        "message": "Course load 5 within Year 3 limit of 5",
+        "value": {
+          "limit": 5
+        }
+      }
+    }
+  ],
+  "model_calls": [
+    {
+      "text": "{\n  \"status\": \"tool_call\",\n  \"tool\": \"check_course_load\",\n  \"arguments\": {\n    \"year_of_study\": 3,\n    \"units_requested\": 5\n  },\n  \"answer\": \"\",\n  \"reason\": \"Check if 5 units for a Year 3 student complies with course load rule R-04 using check_course_load.\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 3855,
+      "prompt_tokens": 671,
+      "completion_tokens": 94,
+      "attempts": 1,
+      "error": null
+    },
+    {
+      "text": "{\n  \"status\": \"ok\",\n  \"tool\": \"\",\n  \"arguments\": {},\n  \"answer\": \"Yes, registering 5 units is within the limit for a Year 3 student. According to rule R-04, the maximum allowed course load for Year 3 is 5 units.\",\n  \"reason\": \"The course load check returned a valid result confirming 5 units is within the Year 3 limit, so no further tool calls are required.\"\n}",
+      "provider": "gemini",
+      "model": "gemini-3.6-flash",
+      "temperature": 0.2,
+      "latency_ms": 11333,
+      "prompt_tokens": 843,
+      "completion_tokens": 102,
+      "attempts": 3,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "ok",
+    "tool": "",
+    "arguments": {},
+    "answer": "Yes, registering 5 units is within the limit for a Year 3 student. According to rule R-04, the maximum allowed course load for Year 3 is 5 units.",
+    "reason": "The course load check returned a valid result confirming 5 units is within the Year 3 limit, so no further tool calls are required."
+  },
+  "observability": {
+    "run_id": "agent-20261017T081946-8452c2",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "gemini",
+    "model": "gemini-3.6-flash",
+    "scripted": false,
+    "model_turns": 2,
+    "model_latency_ms": 15188,
+    "dispatch_latency_ms": 0,
+    "total_latency_ms": 15188,
+    "prompt_tokens": 1514,
+    "completion_tokens": 196,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [
+      "check_course_load"
+    ],
+    "tool_errors": [],
+    "outcome_status": "ok"
+  }
+}

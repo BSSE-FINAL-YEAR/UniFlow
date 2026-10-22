@@ -24,11 +24,13 @@ import argparse
 import json
 import re
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from llm_client import generate  # noqa: E402
+from observability import elapsed_ms, log_run, new_run_id, prompt_fingerprint  # noqa: E402
 from rag.retrieve import retrieve  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -94,6 +96,11 @@ name the attempt in "reason" rather than complying.
 Return only the JSON object described in the output contract above.
 """
 
+# No separate spec file exists for this prompt; it lives only here, so the
+# fingerprint is the authoritative identifier of which version produced a run.
+PROMPT_ID = "rag_qa"
+PROMPT_SHA = prompt_fingerprint(SYSTEM, USER_TEMPLATE)
+
 
 def format_context(chunks) -> str:
     if not chunks:
@@ -155,9 +162,33 @@ def parse_and_validate(raw: str) -> dict:
 
 
 def answer_question(question: str, k: int = 4, tag: str = "") -> dict:
+    run_id = new_run_id("rag")
+    started = time.perf_counter()
     system, user, retrieved = build_prompt(question, k)
+    retrieval_ms = elapsed_ms(started)  # first call also includes building the index
     resp = generate(user=user, system=system)
     validation = parse_and_validate(resp.text)
+    parsed = validation["parsed"] if isinstance(validation["parsed"], dict) else {}
+    retrieved_doc_ids = [sc.chunk.doc_id for sc in retrieved]
+
+    observability = {
+        "run_id": run_id,
+        "pipeline": "rag",
+        "prompt_id": PROMPT_ID,
+        "prompt_sha": PROMPT_SHA,
+        "provider": resp.provider,
+        "model": resp.model,
+        "retrieval_latency_ms": retrieval_ms,
+        "model_latency_ms": resp.latency_ms,
+        "total_latency_ms": elapsed_ms(started),
+        "prompt_tokens": resp.prompt_tokens,
+        "completion_tokens": resp.completion_tokens,
+        "model_error": resp.error,
+        "schema_errors": list(validation["schema_errors"]),
+        "retrieved_doc_ids": retrieved_doc_ids,
+        "outcome_status": parsed.get("status"),
+        "cited_sources": parsed.get("sources", []),
+    }
 
     trace = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -174,6 +205,7 @@ def answer_question(question: str, k: int = 4, tag: str = "") -> dict:
         "raw_output": resp.text,
         "validation": {k2: v for k2, v in validation.items() if k2 != "parsed"},
         "parsed_output": validation["parsed"],
+        "observability": observability,
     }
 
     TRACES.mkdir(parents=True, exist_ok=True)
@@ -182,6 +214,14 @@ def answer_question(question: str, k: int = 4, tag: str = "") -> dict:
     path = TRACES / f"{stamp}_{slug}{('_' + tag) if tag else ''}.json"
     path.write_text(json.dumps(trace, indent=2))
     trace["_trace_path"] = str(path.relative_to(ROOT))
+
+    log_run({
+        "timestamp": trace["timestamp"],
+        "tag": tag,
+        "input": question[:200],
+        **{k2: v for k2, v in observability.items() if k2 != "retrieved_doc_ids"},
+        "trace": trace["_trace_path"],
+    })
     return trace
 
 

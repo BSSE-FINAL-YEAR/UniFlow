@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-10-22T09:16:06.475337+00:00",
+  "request": "A student wants to register 6 units. Is that allowed?",
+  "tag": "FE-27",
+  "state": {
+    "status": "insufficient_context",
+    "started_at": "2026-10-22T09:16:05.543111+00:00",
+    "ended_at": "2026-10-22T09:16:06.475317+00:00",
+    "rounds_used": 0
+  },
+  "steps": [
+    {
+      "round": 0,
+      "kind": "model",
+      "parsed": {
+        "status": "insufficient_context",
+        "tool": "",
+        "arguments": {},
+        "answer": "",
+        "reason": "Need student's year of study to check allowed unit load"
+      },
+      "schema_errors": []
+    }
+  ],
+  "tool_results": [],
+  "model_calls": [
+    {
+      "text": "{\"status\":\"insufficient_context\",\"tool\":\"\",\"arguments\":{},\"answer\":\"\",\"reason\":\"Need student's year of study to check allowed unit load\"}",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "temperature": 0.2,
+      "latency_ms": 932,
+      "prompt_tokens": 703,
+      "completion_tokens": 138,
+      "attempts": 1,
+      "error": null
+    }
+  ],
+  "validation": {
+    "json_parsed_first_try": true,
+    "json_parsed_after_repair": false,
+    "schema_errors": []
+  },
+  "parsed_output": {
+    "status": "insufficient_context",
+    "tool": "",
+    "arguments": {},
+    "answer": "",
+    "reason": "Need student's year of study to check allowed unit load"
+  },
+  "observability": {
+    "run_id": "agent-20261022T091605-8075f2",
+    "pipeline": "agent",
+    "prompt_id": "tool_caller",
+    "prompt_sha": "6209e79b9feb",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "scripted": false,
+    "model_turns": 1,
+    "model_latency_ms": 932,
+    "dispatch_latency_ms": null,
+    "total_latency_ms": 932,
+    "prompt_tokens": 703,
+    "completion_tokens": 138,
+    "model_errors": [],
+    "schema_errors": [],
+    "tools_called": [],
+    "tool_errors": [],
+    "outcome_status": "insufficient_context"
+  }
+}

@@ -6,5 +6,8 @@ __pycache__/
 # Reset every tool_eval_runner.py run — not a deliverable, see its docstring.
 eval/_tool_eval_memory_store.json
 
+# Test-run traces (tests/conftest.py) — never mixed with real run evidence.
+evidence/traces/_pytest/
+
 # Local ClickUp attachments only — do not publish
 docs/Week4_ClickUp_*.docx

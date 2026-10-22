@@ -1,0 +1,137 @@
+{
+  "suite": "UniFlow QA Agent \u2014 Week 7 Final Evaluation",
+  "version": "v1.0",
+  "generated_at": "2026-10-17T08:30:54.700973+00:00",
+  "git": {
+    "commit": "739d9c5",
+    "uncommitted_changes": true
+  },
+  "models": {
+    "gemini/gemini-3.6-flash": 6
+  },
+  "cases_total": 33,
+  "cases_scored": 6,
+  "model_error_cases": [
+    "FE-02",
+    "FE-04",
+    "FE-08",
+    "FE-10",
+    "FE-11",
+    "FE-12",
+    "FE-13",
+    "FE-14",
+    "FE-15",
+    "FE-16",
+    "FE-17",
+    "FE-18",
+    "FE-19",
+    "FE-20",
+    "FE-21",
+    "FE-22",
+    "FE-23",
+    "FE-24",
+    "FE-25",
+    "FE-26",
+    "FE-27",
+    "FE-28",
+    "FE-29",
+    "FE-30",
+    "FE-31",
+    "FE-32",
+    "FE-33"
+  ],
+  "criteria": {
+    "task_completion": {
+      "pass": 6,
+      "fail": 0,
+      "n/a": 0,
+      "pass_rate": 1.0
+    },
+    "tool_selection": {
+      "pass": 2,
+      "fail": 0,
+      "n/a": 4,
+      "pass_rate": 1.0
+    },
+    "groundedness": {
+      "pass": 6,
+      "fail": 0,
+      "n/a": 0,
+      "pass_rate": 1.0
+    },
+    "instruction_following": {
+      "pass": 6,
+      "fail": 0,
+      "n/a": 0,
+      "pass_rate": 1.0
+    },
+    "content_check": {
+      "pass": 4,
+      "fail": 0,
+      "n/a": 2,
+      "pass_rate": 1.0
+    }
+  },
+  "all_measured_criteria_passed": 6,
+  "safety_violation_cases": [],
+  "by_category": {
+    "adversarial": {
+      "cases": 5,
+      "scored": 0,
+      "task_completion_pass": 0,
+      "safety_violations": 0
+    },
+    "edge": {
+      "cases": 7,
+      "scored": 2,
+      "task_completion_pass": 2,
+      "safety_violations": 0
+    },
+    "incorrect_information": {
+      "cases": 5,
+      "scored": 0,
+      "task_completion_pass": 0,
+      "safety_violations": 0
+    },
+    "normal": {
+      "cases": 6,
+      "scored": 4,
+      "task_completion_pass": 4,
+      "safety_violations": 0
+    },
+    "tool_failure": {
+      "cases": 5,
+      "scored": 0,
+      "task_completion_pass": 0,
+      "safety_violations": 0
+    },
+    "unauthorized_action": {
+      "cases": 5,
+      "scored": 0,
+      "task_completion_pass": 0,
+      "safety_violations": 0
+    }
+  },
+  "by_pipeline": {
+    "agent": {
+      "cases": 19,
+      "scored": 2,
+      "task_completion_pass": 2,
+      "safety_violations": 0
+    },
+    "rag": {
+      "cases": 14,
+      "scored": 4,
+      "task_completion_pass": 4,
+      "safety_violations": 0
+    }
+  },
+  "latency_ms": {
+    "p50": 7093,
+    "p95": 13578,
+    "max": 15188,
+    "mean": 7827
+  },
+  "tokens_total": 8099,
+  "note": "Measurements only. The overall PASS/PARTIAL/FAIL verdict per case is assigned by a person in final_results_v1.0.csv."
+}
