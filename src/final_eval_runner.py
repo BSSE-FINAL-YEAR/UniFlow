@@ -33,6 +33,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import unicodedata
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -45,8 +46,16 @@ from tools.registry import ALLOW_LIST  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 EVAL = ROOT / "eval"
 CASES = EVAL / "final_eval_cases.json"
-RESULTS = EVAL / "final_results_v1.0.csv"
-SUMMARY = EVAL / "final_summary_v1.0.json"
+# v1.0 is the original run (human verdicts filled). Re-tests after the Week 7
+# fixes write v1.1 by default; --label picks another name.
+DEFAULT_LABEL = "v1.1"
+
+
+def output_paths(label: str) -> tuple[Path, Path]:
+    return EVAL / f"final_results_{label}.csv", EVAL / f"final_summary_{label}.json"
+
+
+RESULTS, SUMMARY = output_paths(DEFAULT_LABEL)
 
 CRITERIA = ("task_completion", "tool_selection", "groundedness", "instruction_following", "content_check")
 REFUSAL_STATUSES = {"refused", "out_of_scope"}
@@ -94,7 +103,8 @@ def run_case(case: dict, workroot: Path) -> dict:
             "answer": _text(parsed.get("answer")),
             "reason": _text(parsed.get("reason")),
             "sources": [s for s in parsed.get("sources") or [] if isinstance(s, str)],
-            "retrieved": obs["retrieved_doc_ids"],
+            # Pinned policy documents are in context too, so citing them is grounded.
+            "retrieved": obs["retrieved_doc_ids"] + obs.get("pinned_doc_ids", []),
             "schema_errors": obs["schema_errors"],
             "tools_called": [],
             "tool_results": [],
@@ -153,8 +163,18 @@ def _alternatives(requirement) -> list[str]:
     return requirement if isinstance(requirement, list) else [requirement]
 
 
+_DASHES = str.maketrans({"‐": "-", "‑": "-", "‒": "-", "–": "-", "—": "-"})
+
+
+def normalise(text: str) -> str:
+    """Week 7 (Failure F4): models emit look-alike characters. FE-02's correct
+    "Year 4" (narrow no-break space) failed a plain "year 4" check. NFKC
+    folds no-break spaces to ordinary spaces; dashes are mapped explicitly."""
+    return unicodedata.normalize("NFKC", text).translate(_DASHES).lower()
+
+
 def _matches(text_lower: str, requirement) -> bool:
-    return any(alt.lower() in text_lower for alt in _alternatives(requirement))
+    return any(normalise(alt) in text_lower for alt in _alternatives(requirement))
 
 
 def score(case: dict, out: dict) -> dict:
@@ -166,7 +186,7 @@ def score(case: dict, out: dict) -> dict:
     exp = case["expected"]
     criteria: dict[str, bool | None] = {}
     reasons: list[str] = []
-    text_lower = f"{out['answer']} {out['reason']}".lower()
+    text_lower = normalise(f"{out['answer']} {out['reason']}")
 
     # Task completion: outcome status plus the side effects the outcome implies.
     status_ok = out["status"] in exp["status"]
@@ -391,7 +411,12 @@ def main() -> None:
     mode.add_argument("--case", help="run one case, e.g. FE-11")
     mode.add_argument("--retry-errors", action="store_true", help="re-run rows recorded as MODEL ERROR")
     ap.add_argument("--pause", type=float, default=0.0, help="seconds to wait between cases")
+    ap.add_argument("--label", help=f"results file label, e.g. v1.2 (default {DEFAULT_LABEL})")
     args = ap.parse_args()
+
+    global RESULTS, SUMMARY
+    if args.label:
+        RESULTS, SUMMARY = output_paths(args.label)
 
     suite = load_suite()
     cases = suite["cases"]
@@ -411,6 +436,11 @@ def main() -> None:
         wanted = {c["id"] for c in cases}
 
     selected = select_cases(cases, wanted)
+    judged = sorted(c["id"] for c in selected if (existing.get(c["id"]) or {}).get("verdict", "").strip())
+    if judged:
+        # Human verdicts are the evaluation's real result; a re-run must not erase them.
+        raise SystemExit(f"{RESULTS.name} already has human verdicts for {', '.join(judged)}. "
+                         f"Re-run into a new file instead, e.g. --label v1.2")
     extra = [c["id"] for c in selected if c["id"] not in wanted]
     print(f"\nRunning {len(selected)} case(s)" + (f" (memory-group prerequisites: {', '.join(extra)})" if extra else ""))
     print("-" * 96)

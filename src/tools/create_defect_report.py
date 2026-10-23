@@ -22,6 +22,22 @@ RULE_RE = re.compile(r"^R-\d{2}(-[A-Z-]+)?$")
 SEVERITIES = {"low", "medium", "high"}
 REQUIRED = ("story_id", "rule_id", "title", "description", "severity")
 
+# Week 7 (Failure F1): which user stories a defect against each rule may cite.
+# Only links the knowledge base itself states are listed — a rule with no
+# stated story cannot have a defect filed against it until one is agreed.
+RULE_STORIES = {
+    "R-01": ("US-01", "US-03"),  # KB-US01 AC "student number is derived"; KB-REGISTRAR-FAQ: "mechanism behind R-01 ... what US-03 tests"
+    "R-02": ("US-04",),  # KB-US04: "See R-02"
+    "R-04": ("US-08",),  # KB-US08: "See R-04"
+    "R-05": ("US-10",),  # KB-US10: "See R-05 and R-06"
+    "R-06": ("US-10",),
+    "R-07": ("US-05", "US-06", "US-07", "US-09"),  # KB-R07: enrollment, eligibility, prerequisite, duplicate-registration checks
+}
+
+
+def linked_stories(rule_id: str) -> tuple[str, ...]:
+    return RULE_STORIES.get(rule_id[:4], ())
+
 
 class DefectWriteError(OSError):
     """Disk/write failure — dispatch maps this to tool_error: unavailable."""
@@ -50,6 +66,11 @@ def validate_arguments(arguments: dict) -> str | None:
         return "invalid:story_id must match US-NN"
     if not isinstance(rule_id, str) or not RULE_RE.match(rule_id):
         return "invalid:rule_id must match R-NN"
+    stories = linked_stories(rule_id)
+    if not stories:
+        return f"invalid:no user story is linked to {rule_id}; defects can only be filed against {', '.join(RULE_STORIES)}"
+    if story_id not in stories:
+        return f"invalid:{story_id} is not linked to {rule_id}; use story_id {' or '.join(stories)}"
     if not isinstance(title, str) or not title or len(title) > 120:
         return "invalid:title must be a non-empty string of at most 120 characters"
     if not isinstance(description, str) or not description:

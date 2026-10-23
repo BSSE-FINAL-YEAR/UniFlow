@@ -23,7 +23,8 @@ The brief's evidence categories, and the field that captures each:
 | Evidence | Field(s) in the trace's `observability` block / run log line |
 |---|---|
 | **Model** | `provider`, `model`, `model_turns` (agent), `model_error` / `model_errors` |
-| **Prompt** | `prompt_id` (`rag_qa` or `tool_caller`) and `prompt_sha` — a 12-character fingerprint of the exact prompt text sent (see below). Full prompt text stays in the trace's `input` / `model_calls` |
+| **Prompt** | `prompt_id` (`rag_qa` or `tool_caller`) and `prompt_sha` — a 12-character fingerprint of the exact prompt text sent (see below). Full prompt text: RAG traces' `input`; agent traces' `system_prompt` plus `user_prompt` on every model step (see "Correction" below) |
+| **Guardrails** | `guardrails.input_blocked`, `guardrails.injection_signals`, `guardrails.redactions` — see `docs/Week7_Guardrails.md` |
 | **Retrieval** (RAG) | `retrieved_doc_ids`, `retrieval_latency_ms`, `cited_sources` |
 | **Tool** (agent) | `tools_called`, `tool_errors` (tool + error kind), `dispatch_latency_ms`; each dispatch step also records its own `latency_ms` |
 | **Latency** | `model_latency_ms`, `total_latency_ms` (wall clock for the whole run) |
@@ -37,6 +38,16 @@ the `tool_results` entry, because `tool_results` is fed back into the model's
 next prompt. Putting timing there would change what the model sees, and
 observability must never change behaviour
 (`tests/test_observability.py::test_dispatch_latency_is_not_fed_back_into_the_prompt`).
+
+## Correction: agent traces did not record the prompt
+
+The first version of this document said full prompt text was in every
+trace. That was true for RAG traces only. Agent traces stored the model's
+replies (`model_calls`) but never what the model was asked — found while
+fixing the Week 7 evaluation failures. Since the fix, agent traces carry
+`system_prompt` once and `user_prompt` on every model step. The final
+evaluation v1.0 traces (`eval/final_results_v1.0.csv`) predate the fix;
+v1.1 traces include the prompts.
 
 ## Why a prompt fingerprint, not just a version label
 
