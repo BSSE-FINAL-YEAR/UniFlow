@@ -10,7 +10,7 @@ An entry without an evaluation case ID in the "Driven by" column is not a meanin
 ## `qa_test_designer` v1.0 — 10 Sept 2026
 
 **Author:** Yohana Mahamat Abdelrassoul
-**Commit:** `[fill: commit SHA]`
+**Commit:** `a49aaf3`
 **Status:** Baseline
 
 Initial specification. Six-part structure per the Week 2 brief: role, task, context, constraints,
@@ -30,7 +30,7 @@ output format, failure behaviour.
 ## `qa_test_designer` v1.1 — 12 Sept 2026
 
 **Author:** Yohana Mahamat Abdelrassoul
-**Commit:** `[fill: commit SHA]`
+**Commit:** `e7ed6e8`
 **Status:** Active — v1.1 eval re-run complete (`eval/results_v1.1.csv`, 2026-09-12)
 
 v1.0 was run against all 10 evaluation cases and scored: 6 PASS, 1 PARTIAL (PE-03), 3 FAIL
