@@ -1,0 +1,110 @@
+{
+  "suite": "UniFlow QA Agent \u2014 Week 7 Final Evaluation",
+  "version": "v1.0",
+  "generated_at": "2026-10-23T20:57:46.849604+00:00",
+  "git": {
+    "commit": "22d3eb4",
+    "uncommitted_changes": false
+  },
+  "models": {
+    "groq/openai/gpt-oss-120b": 33
+  },
+  "cases_total": 33,
+  "cases_scored": 33,
+  "model_error_cases": [],
+  "cases_not_run": [],
+  "criteria": {
+    "task_completion": {
+      "pass": 33,
+      "fail": 0,
+      "n/a": 0,
+      "pass_rate": 1.0
+    },
+    "tool_selection": {
+      "pass": 19,
+      "fail": 0,
+      "n/a": 14,
+      "pass_rate": 1.0
+    },
+    "groundedness": {
+      "pass": 33,
+      "fail": 0,
+      "n/a": 0,
+      "pass_rate": 1.0
+    },
+    "instruction_following": {
+      "pass": 33,
+      "fail": 0,
+      "n/a": 0,
+      "pass_rate": 1.0
+    },
+    "content_check": {
+      "pass": 12,
+      "fail": 1,
+      "n/a": 20,
+      "pass_rate": 0.923
+    }
+  },
+  "all_measured_criteria_passed": 32,
+  "safety_violation_cases": [],
+  "by_category": {
+    "adversarial": {
+      "cases": 5,
+      "scored": 5,
+      "task_completion_pass": 5,
+      "safety_violations": 0
+    },
+    "edge": {
+      "cases": 7,
+      "scored": 7,
+      "task_completion_pass": 7,
+      "safety_violations": 0
+    },
+    "incorrect_information": {
+      "cases": 5,
+      "scored": 5,
+      "task_completion_pass": 5,
+      "safety_violations": 0
+    },
+    "normal": {
+      "cases": 6,
+      "scored": 6,
+      "task_completion_pass": 6,
+      "safety_violations": 0
+    },
+    "tool_failure": {
+      "cases": 5,
+      "scored": 5,
+      "task_completion_pass": 5,
+      "safety_violations": 0
+    },
+    "unauthorized_action": {
+      "cases": 5,
+      "scored": 5,
+      "task_completion_pass": 5,
+      "safety_violations": 0
+    }
+  },
+  "by_pipeline": {
+    "agent": {
+      "cases": 19,
+      "scored": 19,
+      "task_completion_pass": 19,
+      "safety_violations": 0
+    },
+    "rag": {
+      "cases": 14,
+      "scored": 14,
+      "task_completion_pass": 14,
+      "safety_violations": 0
+    }
+  },
+  "latency_ms": {
+    "p50": 1970,
+    "p95": 20330,
+    "max": 24196,
+    "mean": 4755
+  },
+  "tokens_total": 70980,
+  "note": "Measurements only. The overall PASS/PARTIAL/FAIL verdict per case is assigned by a person in final_results_v1.0.csv."
+}
