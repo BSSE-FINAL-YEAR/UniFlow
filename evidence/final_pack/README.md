@@ -84,10 +84,10 @@ and `final_results_v1.1.csv` (after):
 
 ## Open items
 
-- [ ] Score `eval/final_results_v1.2.csv`'s verdict/notes columns by reading
-      each of the 33 traces (§4 above has the one flagged case, FE-12, to
-      start with).
-- [ ] Re-run `compare_v1.1_v1.2.txt` once verdicts are scored, since the
-      current file compares automated criteria only.
+- [x] Score `eval/final_results_v1.2.csv`'s verdict/notes columns — done:
+      32 PASS / 1 PARTIAL / 0 FAIL, same aggregate as v1.1. See §4.
+- [x] Re-run `compare_v1.1_v1.2.txt` with real verdicts — done: 1 fixed
+      (FE-25), 1 regressed (FE-12, a wording-only miss — see §4), net
+      aggregate unchanged.
 - [ ] Confirm this pack's links still resolve after any further repository
       reorganisation.
