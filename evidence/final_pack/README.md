@@ -43,16 +43,19 @@ Generated 2026-10-24, saved as the guide specifies:
 - [`run_log_summary.txt`](run_log_summary.txt) — `src/log_summary.py --tag-prefix FE-`
 - [`test_results.txt`](test_results.txt) — `pytest tests/ -q`: 107 passed
 
-**On v1.2:** the suite was re-run live (stability check, open issue O4) and
-scored automatically against task completion, groundedness, instruction
-following, tool selection and content-check criteria — all passed except
-one content-check flag on FE-12
-([`evidence/traces/rag/20261023T205222_..._FE-12.json`](../traces/rag/20261023T205222_can-a-year-3-bsc-information-systems-tec_FE-12.json)).
-Per this project's standing rule (the Week 7 revert exists because a verdict
-column was pre-filled once), **the human verdict/notes columns in
-`final_results_v1.2.csv` are deliberately left blank** until someone reads
-the 33 traces and scores them. That scoring is this evidence pack's one
-open task.
+**v1.2 stability check (open issue O4) — scored.** All 33 traces were read
+and verdicts assigned by hand, same rule as every other version:
+**32 PASS / 1 PARTIAL / 0 FAIL**, identical aggregate to v1.1. The one
+PARTIAL moved: FE-25 (PARTIAL in v1.1, a tool-retry case) is now PASS, but
+FE-12 (PASS in v1.1) is now PARTIAL — both runs correctly answer "can a
+Year 3 BIST student study in the evening? No," grounded in the same source,
+but v1.1's answer explicitly said "Day (PS)" and v1.2's did not, so it
+misses the case's specific `answer_must_contain: ["day"]` check. This is
+genuine evidence for O4: the aggregate pass rate is stable across the three
+runs so far (v1.0 differs, but v1.1 and v1.2 both score 32/1/0), while the
+*specific* case that is imperfect is not — a probabilistic model can answer
+correctly-but-differently-worded on a re-run. See
+`compare_v1.1_v1.2.txt` for the full case-by-case diff.
 
 ## 5. Failure catalogue — before/after trace pairs
 
@@ -81,10 +84,10 @@ and `final_results_v1.1.csv` (after):
 
 ## Open items
 
-- [ ] Score `eval/final_results_v1.2.csv`'s verdict/notes columns by reading
-      each of the 33 traces (§4 above has the one flagged case, FE-12, to
-      start with).
-- [ ] Re-run `compare_v1.1_v1.2.txt` once verdicts are scored, since the
-      current file compares automated criteria only.
+- [x] Score `eval/final_results_v1.2.csv`'s verdict/notes columns — done:
+      32 PASS / 1 PARTIAL / 0 FAIL, same aggregate as v1.1. See §4.
+- [x] Re-run `compare_v1.1_v1.2.txt` with real verdicts — done: 1 fixed
+      (FE-25), 1 regressed (FE-12, a wording-only miss — see §4), net
+      aggregate unchanged.
 - [ ] Confirm this pack's links still resolve after any further repository
       reorganisation.
