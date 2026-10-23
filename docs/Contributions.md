@@ -58,4 +58,4 @@ Confirmed in the working copy after `git pull origin main`:
 | 6 | https://app.clickup.com/1200410000004069/v/li/1200410000007526 |
 | 8 | https://app.clickup.com/1200410000004069/v/li/1200410000007528 |
 
-Weeks 1, 2, and 7 use the lists in the same ClickUp space (sidebar: Week N Deliverables Group I). Board screenshots, taken 23 Oct 2026: `evidence/screenshots/clickup-week1.png` through `evidence/screenshots/clickup-week8.png`. Weeks 1–7 are Complete. Week 8 tasks are assigned and still open for Alvin, Emmanuel, and Swale.
+Weeks 1, 2, and 7 use the lists in the same ClickUp space (sidebar: Week N Deliverables Group I). Board screenshots, taken 23 Oct 2026: `evidence/screenshots/clickup-week1.png` through `evidence/screenshots/clickup-week8.png`. Weeks 1–7 are Complete. Week 8 tasks are assigned and in progress while still testing for us all.
