@@ -274,3 +274,26 @@ def test_scripted_unauthorized_loop_refuses(tmp_path):
     assert trace["tool_results"][0]["result"]["tool_error"] == "unauthorized"
     assert trace["parsed_output"]["status"] == "refused"
     assert list(tmp_path.glob("*.json")) == []
+
+
+def test_duplicate_reports_the_real_status_after_human_review(tmp_path):
+    """Week 8 rehearsal: draft, a human approves, the same violation is reported
+    again. The duplicate result must say 'approved', not 'pending_review', and
+    give the original creation time."""
+    defects_dir = tmp_path / "defects"
+    memory_store = tmp_path / "memory.json"
+    args = {"story_id": "US-07", "rule_id": "R-07", "title": "Prerequisite skipped",
+            "description": "BSE2101 without BSE1101.", "severity": "medium"}
+    first = dispatch("create_defect_report", args, defects_dir=defects_dir, memory_store=memory_store)
+
+    path = defects_dir / f"{first['defect_id']}.json"
+    record = json.loads(path.read_text(encoding="utf-8"))
+    record["status"] = "approved"  # what scripts/review_defect.py does
+    path.write_text(json.dumps(record), encoding="utf-8")
+
+    second = dispatch("create_defect_report", args, defects_dir=defects_dir, memory_store=memory_store)
+    assert second["duplicate_of"] == first["defect_id"]
+    assert second["status"] == "approved"
+    assert second["created_at"] == first["created_at"]
+    assert "approved" in second["note"]
+    assert len(list(defects_dir.glob("DEF-*.json"))) == 1

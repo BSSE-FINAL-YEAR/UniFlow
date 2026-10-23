@@ -65,7 +65,7 @@ Check the install with the offline tests (no API key needed):
 python -m pytest tests/ -q
 ```
 
-Expect `107 passed`.
+Expect `108 passed`.
 
 For live runs, copy `.env.example` to `.env` and add **your own** key. Never commit `.env`.
 
@@ -183,7 +183,7 @@ src/observability.py   run IDs, prompt fingerprints, run log
 src/final_eval_runner.py, compare_eval.py, log_summary.py   Week 7 evaluation tools
 scripts/               human-only steps (not callable by the model)
 eval/                  evaluation cases and results for every week
-tests/                 107 offline tests
+tests/                 108 offline tests
 evidence/              traces, run log, defect drafts, screenshots
 ```
 

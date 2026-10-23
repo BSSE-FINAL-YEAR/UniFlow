@@ -9,13 +9,25 @@ Output is either the tool's success/domain schema or the shared error envelope.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from memory.case_history import find_prior_defect, remember_defect
 
-from .create_defect_report import DefectWriteError
+from .create_defect_report import DEFAULT_DEFECTS_DIR, DefectWriteError
 from .errors import is_tool_error, tool_error
 from .registry import ALLOW_LIST, is_allowed
+
+
+def _current_status(defect_id: str, defects_dir: Path | None) -> str:
+    """Status in the defect file itself; 'missing' if memory points at a deleted file."""
+    path = Path(defects_dir or DEFAULT_DEFECTS_DIR) / f"{defect_id}.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("status", "unknown")
+    except FileNotFoundError:
+        return "missing"
+    except (OSError, json.JSONDecodeError):
+        return "unknown"
 
 
 def dispatch(
@@ -90,15 +102,19 @@ def dispatch(
             seen_again = remember_defect(
                 prior["rule_id"], prior["story_id"], prior["defect_id"], prior["path"], store=memory_store
             )
+            # Report the record as it is now: a human may already have approved
+            # or rejected it. (Found in Week 8 rehearsal: this used to say
+            # pending_review regardless, and the agent repeated it.)
+            status = _current_status(seen_again["defect_id"], defects_dir)
             return {
                 "defect_id": seen_again["defect_id"],
-                "status": "pending_review",
+                "status": status,
                 "path": seen_again["path"],
-                "created_at": seen_again["last_seen"],
+                "created_at": seen_again["first_seen"],
                 "duplicate_of": seen_again["defect_id"],
                 "note": (
                     f"A defect for {seen_again['rule_id']}/{seen_again['story_id']} was already "
-                    f"on file (first seen {seen_again['first_seen']}, seen "
+                    f"on file with status {status} (first seen {seen_again['first_seen']}, seen "
                     f"{seen_again['times_seen']} time(s) total). No new report was written."
                 ),
             }

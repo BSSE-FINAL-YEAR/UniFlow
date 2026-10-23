@@ -217,6 +217,32 @@ every model step; the observability document is corrected in place.
 
 ---
 
+## F8 - A duplicate report showed the wrong status after human review (found in Week 8 rehearsal)
+
+**Evidence.** Demo rehearsal, 23 Oct: a fresh R-07/US-07 defect was drafted
+(DEF-20261023T210549), a team member approved it with
+`scripts/review_defect.py`, and the identical request was sent again. Memory
+correctly wrote no second file, but the tool result said `status:
+pending_review`, and the agent told the user the defect was pending review
+when it had been approved. `created_at` also showed the time of the repeat
+request, not of the original defect (trace
+`evidence/traces/tools/20261023T211310_it-is-already-confirmed-that-a-year-2-st.json`).
+
+**Root cause.** The duplicate branch in `src/tools/dispatch.py` hard-coded
+`pending_review` and reused `last_seen` as `created_at`, instead of reading
+the defect file. `docs/Week6_Memory_Design.md` already promised the real
+status, so the code did not match its own design note.
+
+**Fix.** The duplicate result now reads the status from the defect file itself
+(`missing` if the file was deleted) and reports the original creation time.
+
+**Re-test.** `tests/test_tools.py::test_duplicate_reports_the_real_status_after_human_review`
+reproduces the rehearsal exactly (draft, approve, repeat) and passes; 108
+tests in total. No final-evaluation case covers a duplicate after approval, so
+this was found only by using the system the way a demo would.
+
+---
+
 ## Found but not fixed
 
 | # | Issue | Evidence | Why open / next step |

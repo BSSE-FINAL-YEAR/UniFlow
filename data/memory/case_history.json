@@ -5,7 +5,16 @@
     "defect_id": "DEF-20261008T130552",
     "path": "evidence/defects/DEF-20261008T130552.json",
     "first_seen": "2026-10-08T13:05:52Z",
-    "last_seen": "2026-10-08T13:05:52Z",
-    "times_seen": 2
+    "last_seen": "2026-10-23T20:43:49Z",
+    "times_seen": 4
+  },
+  "R-07:US-07": {
+    "rule_id": "R-07",
+    "story_id": "US-07",
+    "defect_id": "DEF-20261023T210549",
+    "path": "evidence/defects/DEF-20261023T210549.json",
+    "first_seen": "2026-10-23T21:05:49Z",
+    "last_seen": "2026-10-23T21:24:41Z",
+    "times_seen": 3
   }
 }

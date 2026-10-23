@@ -1,0 +1,13 @@
+{
+  "defect_id": "DEF-20261023T210549",
+  "status": "approved",
+  "story_id": "US-07",
+  "rule_id": "R-07",
+  "title": "Prerequisite not satisfied for BSE2101 registration",
+  "description": "A Year 2 student registered for BSE2101 Data Structures without having passed the prerequisite BSE1101, violating rule R-07.",
+  "severity": "high",
+  "created_at": "2026-10-23T21:05:49Z",
+  "path": "evidence/defects/DEF-20261023T210549.json",
+  "reviewed_by": "Alvin",
+  "reviewed_at": "2026-10-23T21:07:37Z"
+}

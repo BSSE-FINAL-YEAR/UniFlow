@@ -23,7 +23,7 @@ adversarial, tool failure, unauthorized action):
 
 - v1.0: 23 PASS / 4 PARTIAL / 6 FAIL
 - v1.1 after fixes: **32 PASS / 1 PARTIAL / 0 FAIL**, 9 cases fixed, 0 regressions
-- 107 offline tests passing
+- 108 offline tests passing
 
 ## Run it
 
