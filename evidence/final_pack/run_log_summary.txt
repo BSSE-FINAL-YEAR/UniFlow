@@ -1,0 +1,35 @@
+{
+  "runs": 165,
+  "by_pipeline": {
+    "rag": 70,
+    "agent": 95
+  },
+  "by_status": {
+    "ok": 59,
+    "null": 22,
+    "partial": 39,
+    "insufficient_context": 17,
+    "refused": 24,
+    "out_of_scope": 4
+  },
+  "model_error_runs": 57,
+  "scripted_runs": 0,
+  "tool_errors_by_kind": {
+    "invalid_parameter": 1,
+    "unexpected_response": 6,
+    "unavailable": 3
+  },
+  "latency_ms": {
+    "p50": 1860,
+    "p95": 17967,
+    "max": 24196
+  },
+  "prompt_tokens": 173481,
+  "completion_tokens": 40067,
+  "prompt_versions": {
+    "rag_qa@fc62436ad2b9": 42,
+    "tool_caller@6209e79b9feb": 57,
+    "rag_qa@b660de80fb6b": 28,
+    "tool_caller@3882b0b63809": 38
+  }
+}
