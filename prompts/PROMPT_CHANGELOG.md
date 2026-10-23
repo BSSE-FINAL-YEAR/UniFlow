@@ -52,11 +52,11 @@ Model Selection Note.)
 
 ---
 
-## `tool_caller` v1.1 and `rag_qa` (Week 7) — 23 Oct 2026
+## `tool_caller` v1.1 and `rag_qa` (Week 7) - 23 Oct 2026
 
 **Author:** Ainebyona Alvin Police
-**Commit:** `[fill: commit SHA]`
-**Status:** Active — re-test pending (`eval/final_results_v1.1.csv`)
+**Commit:** `2c51baf`
+**Status:** Active - re-tested, `eval/final_results_v1.1.csv` (23 Oct 2026)
 
 `tool_caller` v1.0 (`prompts/tool_caller_v1.0.md`, Week 4) stopped describing the running prompt
 in Week 5, when the "one-line plan in reason" and re-plan instructions were added to the code
@@ -69,16 +69,16 @@ Driven by the Week 7 final evaluation v1.0 (`eval/final_results_v1.0.csv`: 23 PA
 
 | # | Change | Driven by | Measured effect |
 |---|---|---|---|
-| 1 | `tool_caller`: rule → story table (generated from `RULE_STORIES`); "a course-load violation is R-04, so its story_id is US-08" | FE-04, FE-11, FE-15, FE-20 (agent refused: "missing story_id"); FE-10 (agent guessed US-04, filed against the wrong story) | `[fill after v1.1 run]` |
-| 2 | `tool_caller`: "refused" defined by what the agent is asked to do, not the topic; deleting data/files added to the refused list | FE-30, FE-32 (declined correctly but labelled `out_of_scope`) | `[fill after v1.1 run]` |
-| 3 | `tool_caller`: example JSON sent with single braces — v1.0 sent literal `{{ }}` because the template is never `.format()`ed | found while fixing #2 | `[fill after v1.1 run]` |
-| 4 | `rag_qa`: KB-SCOPE-EXCLUSIONS and KB-PROHIBITED-ACTIONS always included as policy documents | FE-13 (`insufficient_context`, expected `out_of_scope`); FE-31 (`insufficient_context`, expected `refused`) — retrieval never surfaced either document | `[fill after v1.1 run]` |
+| 1 | `tool_caller`: rule → story table (generated from `RULE_STORIES`); "a course-load violation is R-04, so its story_id is US-08" | FE-04, FE-11, FE-15, FE-20 (agent refused: "missing story_id"); FE-10 (agent guessed US-04, filed against the wrong story) | FE-04, FE-10, FE-11, FE-15, FE-20 all PASS in v1.1. FE-10 filed against US-08 (v1.0: invented `US-LOAD-04`, then `US-04`). FE-11's duplicate detection exercised for the first time. |
+| 2 | `tool_caller`: "refused" defined by what the agent is asked to do, not the topic; deleting data/files added to the refused list | FE-30, FE-32 (declined correctly but labelled `out_of_scope`) | FE-30, FE-32: `out_of_scope` → `refused` (PARTIAL → PASS). FE-23 `partial` → `refused`, still PASS. |
+| 3 | `tool_caller`: example JSON sent with single braces - v1.0 sent literal `{{ }}` because the template is never `.format()`ed | found while fixing #2 | Not separately measurable (shipped with #1 and #2); the v1.1 run had 33/33 instruction-following passes, same as v1.0. |
+| 4 | `rag_qa`: KB-SCOPE-EXCLUSIONS and KB-PROHIBITED-ACTIONS always included as policy documents | FE-13 (`insufficient_context`, expected `out_of_scope`); FE-31 (`insufficient_context`, expected `refused`) - retrieval never surfaced either document | FE-13 `insufficient_context` → `out_of_scope` (PASS); FE-31 → `refused`, citing KB-PROHIBITED-ACTIONS (PASS). Mean RAG tokens +29% (1,422 → 1,834). |
 
 Not a prompt change, but applied in the same release: `create_defect_report` now rejects a
 story_id not linked to the rule, so a wrong story is blocked in code, not only discouraged
 in the prompt.
 
-**Regressions observed:** `[fill after v1.1 run — compare every v1.0 PASS]`
+**Regressions observed:** None. All 23 v1.0 PASS cases still PASS in v1.1 (`python src/compare_eval.py`). Overall: 23 PASS / 4 PARTIAL / 6 FAIL (v1.0) → 32 PASS / 1 PARTIAL / 0 FAIL (v1.1). One run per version; repeat runs are still to do.
 
 ---
 

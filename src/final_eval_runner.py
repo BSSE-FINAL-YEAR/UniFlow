@@ -323,7 +323,7 @@ def _percentile(values: list[int], pct: int) -> int | None:
     return int(statistics.quantiles(values, n=100, method="inclusive")[pct - 1])
 
 
-def summarise(rows: list[dict], suite: dict) -> dict:
+def summarise(rows: list[dict], suite: dict, git: dict | None = None) -> dict:
     scored = [r for r in rows if r["status"] != MODEL_ERROR]
     criteria = {}
     for c in CRITERIA:
@@ -351,7 +351,7 @@ def summarise(rows: list[dict], suite: dict) -> dict:
         "suite": suite["suite"],
         "version": suite["version"],
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "git": _git_state(),
+        "git": git if git is not None else _git_state(),
         "models": dict(Counter(r["model"] for r in scored)),
         "cases_total": len(suite["cases"]),
         "cases_scored": len(scored),
@@ -418,6 +418,9 @@ def main() -> None:
     if args.label:
         RESULTS, SUMMARY = output_paths(args.label)
 
+    # Read before the run writes anything, so the summary records whether the
+    # *code* was committed — not the results file this run is about to create.
+    git_at_start = _git_state()
     suite = load_suite()
     cases = suite["cases"]
     existing = read_existing()
@@ -490,7 +493,7 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(ordered)
 
-    summary = summarise(ordered, suite)
+    summary = summarise(ordered, suite, git=git_at_start)
     SUMMARY.write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     print("-" * 96)

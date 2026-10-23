@@ -1,4 +1,4 @@
-# UniFlow — Week 7 Observability and Tracing
+# UniFlow - Week 7 Observability and Tracing
 
 Week 7 deliverable: *"Observability/tracing evidence."* The brief asks for
 logs/traces capturing "useful model, prompt, retrieval, tool, latency/error
@@ -8,8 +8,8 @@ and outcome evidence."
 
 | Layer | Where | One per | Use it to answer |
 |---|---|---|---|
-| **Trace** | `evidence/traces/rag/*.json`, `evidence/traces/tools/*.json` | Run | "What exactly happened in this one run?" — full prompt, every model turn, every tool call and result |
-| **Run log** | `evidence/logs/runs.jsonl` | Run (one line) | "What is happening across runs?" — outcomes, errors, latency, tokens over many runs, without opening each trace |
+| **Trace** | `evidence/traces/rag/*.json`, `evidence/traces/tools/*.json` | Run | "What exactly happened in this one run?" - full prompt, every model turn, every tool call and result |
+| **Run log** | `evidence/logs/runs.jsonl` | Run (one line) | "What is happening across runs?" - outcomes, errors, latency, tokens over many runs, without opening each trace |
 
 Traces have existed since Week 2. Week 7 adds an `observability` block to
 every trace, the run log, and `src/log_summary.py` to read it. The code is in
@@ -23,8 +23,8 @@ The brief's evidence categories, and the field that captures each:
 | Evidence | Field(s) in the trace's `observability` block / run log line |
 |---|---|
 | **Model** | `provider`, `model`, `model_turns` (agent), `model_error` / `model_errors` |
-| **Prompt** | `prompt_id` (`rag_qa` or `tool_caller`) and `prompt_sha` — a 12-character fingerprint of the exact prompt text sent (see below). Full prompt text: RAG traces' `input`; agent traces' `system_prompt` plus `user_prompt` on every model step (see "Correction" below) |
-| **Guardrails** | `guardrails.input_blocked`, `guardrails.injection_signals`, `guardrails.redactions` — see `docs/Week7_Guardrails.md` |
+| **Prompt** | `prompt_id` (`rag_qa` or `tool_caller`) and `prompt_sha` - a 12-character fingerprint of the exact prompt text sent (see below). Full prompt text: RAG traces' `input`; agent traces' `system_prompt` plus `user_prompt` on every model step (see "Correction" below) |
+| **Guardrails** | `guardrails.input_blocked`, `guardrails.injection_signals`, `guardrails.redactions` - see `docs/Week7_Guardrails.md` |
 | **Retrieval** (RAG) | `retrieved_doc_ids`, `retrieval_latency_ms`, `cited_sources` |
 | **Tool** (agent) | `tools_called`, `tool_errors` (tool + error kind), `dispatch_latency_ms`; each dispatch step also records its own `latency_ms` |
 | **Latency** | `model_latency_ms`, `total_latency_ms` (wall clock for the whole run) |
@@ -43,7 +43,7 @@ observability must never change behaviour
 
 The first version of this document said full prompt text was in every
 trace. That was true for RAG traces only. Agent traces stored the model's
-replies (`model_calls`) but never what the model was asked — found while
+replies (`model_calls`) but never what the model was asked - found while
 fixing the Week 7 evaluation failures. Since the fix, agent traces carry
 `system_prompt` once and `user_prompt` on every model step. The final
 evaluation v1.0 traces (`eval/final_results_v1.0.csv`) predate the fix;
@@ -53,7 +53,7 @@ v1.1 traces include the prompts.
 
 While building this, we found that `prompts/tool_caller_v1.0.md` says *"This is
 the specification; `src/tool_baseline.py` is the running copy. They must stay
-identical"* — but the spec file was last changed in Week 4, and Week 5 changed
+identical"* - but the spec file was last changed in Week 4, and Week 5 changed
 the running prompt (the one-line plan in `reason`, the re-plan instruction).
 A hand-maintained version label would have carried that drift silently into
 every trace. `prompt_sha` is computed from the prompt text actually sent, so
