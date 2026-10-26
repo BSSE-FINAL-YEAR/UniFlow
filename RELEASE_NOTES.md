@@ -1,9 +1,20 @@
-# UniFlow v1.0.0: final release (BSE4104 Week 8)
+# UniFlow v1.0.1: final release (BSE4104 Week 8)
 
 An AI-native QA agent for a simulated university academic-management system,
 built over eight weeks by Group I. It answers from a controlled knowledge base
 with citations, checks course loads with a deterministic tool, drafts defect
 reports for human review, and refuses actions outside its AI Boundary Matrix.
+
+## Changes since v1.0.0
+
+- **Fix (F8):** a repeated defect request now reports the defect's real status
+  (for example `approved` after human review) and its original creation time,
+  instead of always `pending_review` (`src/tools/dispatch.py`). Found in the
+  Week 8 demo rehearsal; see `docs/Week7_Failures.md`.
+- **Test:** `test_duplicate_reports_the_real_status_after_human_review`, 108 tests in total.
+- **Evaluation:** v1.2 stability re-run scored 32 PASS / 1 PARTIAL / 0 FAIL
+  (`eval/final_results_v1.2.csv`, `evidence/final_pack/compare_v1.1_v1.2.txt`).
+- **Documents:** final engineering report, contributions and AI engineering log updated.
 
 ## What is in this release
 

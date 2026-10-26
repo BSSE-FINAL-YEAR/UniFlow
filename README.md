@@ -2,7 +2,7 @@
 
 **An AI-native QA agent for a university academic management system.**
 
-Makerere University · BSE4104 Emerging Trends in Software Engineering · Group I · 2026/2027 · Release **v1.0.0**
+Makerere University · BSE4104 Emerging Trends in Software Engineering · Group I · 2026/2027 · Release **v1.0.1**
 
 UniFlow is a **simulated** academic-management system (student registration, course registration, timetabling). This repository is **not** that full system. It is the **QA Agent** that checks UniFlow's approved rules, answers from a controlled knowledge base, and drafts defect reports for a human to review.
 
@@ -46,7 +46,7 @@ Source: Week 1 AI Boundary Matrix (`03_AI_Boundary_Matrix GROUP I.docx`).
 | 5 | Bounded agent: Sense, Plan, Act, Observe, Stop loop with a 3-round limit | `src/tool_baseline.py`, `docs/Week5_Agent_Task_Contract.md` |
 | 6 | Explicit session state, persistent case-history memory, MCP-style interface spec | `SessionState` in `src/tool_baseline.py`, `src/memory/`, `docs/Week6_*.md` |
 | 7 | 33-scenario live evaluation, observability, guardrails, Failure Catalogue | `eval/final_*`, `src/final_eval_runner.py`, `src/guardrails.py`, `docs/Week7_*.md` |
-| 8 | Release v1.0.0, final report, evidence pack, demonstration | this README, `RELEASE_NOTES.md` |
+| 8 | Release v1.0.1, final report, evidence pack, demonstration | this README, `RELEASE_NOTES.md` |
 
 ---
 
