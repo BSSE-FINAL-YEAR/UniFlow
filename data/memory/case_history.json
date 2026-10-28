@@ -16,5 +16,14 @@
     "first_seen": "2026-10-23T21:05:49Z",
     "last_seen": "2026-10-23T21:24:41Z",
     "times_seen": 3
+  },
+  "R-05:US-10": {
+    "rule_id": "R-05",
+    "story_id": "US-10",
+    "defect_id": "DEF-20261028T203227",
+    "path": "evidence/defects/DEF-20261028T203227.json",
+    "first_seen": "2026-10-28T20:32:27Z",
+    "last_seen": "2026-10-28T20:35:38Z",
+    "times_seen": 2
   }
 }

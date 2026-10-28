@@ -1,0 +1,13 @@
+{
+  "defect_id": "DEF-20261028T203227",
+  "status": "approved",
+  "story_id": "US-10",
+  "rule_id": "R-05",
+  "title": "Day class scheduled outside allowed window",
+  "description": "The day class for BSE2101 is timetabled from 16:00 to 17:00, which exceeds the allowed day class window of 08:00-16:00 per rule R-05 (US-10).",
+  "severity": "medium",
+  "created_at": "2026-10-28T20:32:27Z",
+  "path": "evidence/defects/DEF-20261028T203227.json",
+  "reviewed_by": "Alvin",
+  "reviewed_at": "2026-10-28T20:34:57Z"
+}
